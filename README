@@ -1,0 +1,13 @@
+This repository contains plugins written for Moon's Pub.
+
+Unless specified otherwise, code in this repository is
+licensed under the AGPLv3 license. You can find this in
+the COPYING file.
+
+The code style should be roughly in line with Go's.
+
+To build, use the makefile with SPCOMP64 set to the
+absolute path to your spcomp64 binary under scripting/.
+If you're running Windows you can run make using WSL,
+or manually compile the file. You may need to manually
+install dependencies.
