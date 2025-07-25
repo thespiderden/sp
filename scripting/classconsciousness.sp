@@ -45,8 +45,7 @@ public Action cmdRoll(int args) {
 	return Plugin_Handled
 }
 
-public Action cmdChangeClass(int args)
-{
+public Action cmdChangeClass(int args) {
 	if (!Enabled.BoolValue) {
 		PrintToServer("[CC] Please enable the plugin if you wish to use sm_cc_change.")
 		return Plugin_Handled
