@@ -41,7 +41,7 @@ public Action cmdRoll(int args) {
 
 	rollClasses(true)
 	updatePlayerClasses()
-	printClasses("Admin Re-rolled")
+	printClasses("Re-rolled")
 	return Plugin_Handled
 }
 
