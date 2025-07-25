@@ -150,12 +150,16 @@ void rollClasses(force=false) {
 	}
 }
 
-void killClientEntByProp(char[] entName, char[] entPropWithClientNo, int client, single=false) {
+// num=0 means search unlimited entities.
+void killClientEntByProp(char[] entName, char[] entPropWithClientNo, int client, num=0) {
 	int ent = -1
+	int found = 0
 	while ((ent = FindEntityByClassname(ent, entName)) != INVALID_ENT_REFERENCE) {
 		if (GetEntPropEnt(ent, Prop_Send, entPropWithClientNo) == client) {
+
 			AcceptEntityInput(ent, "Kill")
-			if (single) {
+			found++
+			if (num != 0 && found == num) {
 				return
 			}
 		}
@@ -171,16 +175,16 @@ void updatePlayerClasses() {
 
 		switch (TF2_GetPlayerClass(i)) {
 			case TFClass_Engineer: {
-				killClientEntByProp("obj_dispenser", "m_hBuilder", i, true)
-				killClientEntByProp("obj_teleporter", "m_hBuilder", i, false)
-				killClientEntByProp("obj_sentrygun", "m_hBuilder", i, true)
-				killClientEntByProp("obj_jumppad", "m_hBuilder", i, false)
+				killClientEntByProp("obj_dispenser", "m_hBuilder", i, 1)
+				killClientEntByProp("obj_teleporter", "m_hBuilder", i, 2)
+				killClientEntByProp("obj_sentrygun", "m_hBuilder", i, 1)
+				killClientEntByProp("obj_jumppad", "m_hBuilder", i, 2)
 			}
 			case TFClass_Spy: {
 				killClientEntByProp("obj_attachment_sapper", "m_hOwner", i)
 			}
 			case TFClass_DemoMan: {
-				killClientEntByProp("sticky", "m_hThrower", i)
+				killClientEntByProp("sticky", "m_hThrower", 8)
 			}
 		}
 
