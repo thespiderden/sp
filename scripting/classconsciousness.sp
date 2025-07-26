@@ -67,6 +67,8 @@ public Action cmdChangeClass(int args) {
 		target = TFTeam_Green
 	} else if (StrEqual(buf, "yellow", false)) {
 		target = TFTeam_Yellow
+	} else if (StrEqual(buf, "all", false)) {
+		target = TFTeam_Unassigned // Magic value later for "all"
 	} else {
 		PrintToServer("[CC] Invalid team name specified")
 		return Plugin_Handled
@@ -89,11 +91,21 @@ public Action cmdChangeClass(int args) {
 		return Plugin_Handled
 	}
 
-	classes[target] = i
-	updatePlayerClasses()
-	printClasses("Admin changed class")
+	if (target != TFTeam_Unassigned) {
+		classes[target] = i
+		printClasses("Admin changed class")
+	} else {
+		// Magic value used here
+		classes[TFTeam_Red] = i
+		classes[TFTeam_Blue] = i
+		classes[TFTeam_Green] = i
+		classes[TFTeam_Yellow] = i
+		printClasses("Admin changed classes")
+	}
 
-	return Plugin_Handled;
+	updatePlayerClasses()
+
+	return Plugin_Handled
 }
 
 void onEnabledChange(ConVar cvar, char[] oldv, char[] newv) {
