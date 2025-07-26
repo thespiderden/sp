@@ -93,14 +93,14 @@ public Action cmdChangeClass(int args) {
 
 	if (target != TFTeam_Unassigned) {
 		classes[target] = i
-		printClasses("Admin changed class")
+		printClasses("Class changed")
 	} else {
 		// Magic value used here
 		classes[TFTeam_Red] = i
 		classes[TFTeam_Blue] = i
 		classes[TFTeam_Green] = i
 		classes[TFTeam_Yellow] = i
-		printClasses("Admin changed classes")
+		printClasses("Classes changed")
 	}
 
 	updatePlayerClasses()
