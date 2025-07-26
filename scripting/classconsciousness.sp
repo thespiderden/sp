@@ -29,8 +29,15 @@ public OnPluginStart() {
 	RegServerCmd("sm_cc_change", cmdChangeClass, "Changes the class of a particular team. sm_cc_change <team> <class>")
 	RegServerCmd("sm_cc_roll", cmdRoll, "Rolls a new set of classes, bypassing sm_cc_rolls 0.")
 
+	RegConsoleCmd("sm_classes", cmdClasses)
+
 	HookEvent("player_spawn", onPlayerSpawn)
 	HookEvent("teamplay_round_start", onRoundStart)
+}
+
+public Action cmdClasses(int client, int args) {
+	printClasses()
+	return Plugin_Handled
 }
 
 public Action cmdRoll(int args) {
