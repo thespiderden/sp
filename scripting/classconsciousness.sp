@@ -2,8 +2,7 @@
 #include <tf2c>
 #include <sdktools>
 
-public Plugin myinfo =
-{
+public Plugin myinfo = {
 	name = "Class Consciousness",
 	author = "webb <w@spiderden.org>",
 	description = "A class enforcer.",
