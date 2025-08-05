@@ -98,14 +98,14 @@ public Action cmdChangeClass(int args) {
 	}
 
 	if (target != TFTeam_Unassigned) {
-		classes[target] = i
+		classes[target] = class
 		printClasses("Class changed")
 	} else {
 		// Magic value used here
-		classes[TFTeam_Red] = i
-		classes[TFTeam_Blue] = i
-		classes[TFTeam_Green] = i
-		classes[TFTeam_Yellow] = i
+		classes[TFTeam_Red] = class
+		classes[TFTeam_Blue] = class
+		classes[TFTeam_Green] = class
+		classes[TFTeam_Yellow] = class
 		printClasses("Classes changed")
 	}
 
@@ -174,7 +174,6 @@ void killClientEntByProp(char[] entName, char[] entPropWithClientNo, int client,
 	int found = 0
 	while ((ent = FindEntityByClassname(ent, entName)) != INVALID_ENT_REFERENCE) {
 		if (GetEntPropEnt(ent, Prop_Send, entPropWithClientNo) == client) {
-
 			AcceptEntityInput(ent, "Kill")
 			found++
 			if (num != 0 && found == num) {
@@ -202,7 +201,7 @@ void updatePlayerClasses() {
 				killClientEntByProp("obj_attachment_sapper", "m_hOwner", i)
 			}
 			case TFClass_DemoMan: {
-				killClientEntByProp("sticky", "m_hThrower", 8)
+				killClientEntByProp("sticky", "m_hThrower", i, 8)
 			}
 		}
 
