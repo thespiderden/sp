@@ -6,3 +6,7 @@ classconsciousness: scripting/classconsciousness.sp
 zensitive: scripting/zensitive.sp
 	mkdir -p plugins
 	${SPCOMP64} scripting/zensitive.sp -o plugins/zensitive.smx
+
+condify: scripting/condify.sp
+	mkdir -p plugins
+	${SPCOMP64} scripting/condify.sp -o plugins/condify.smx
