@@ -2,6 +2,7 @@
 #include <clientprefs>
 #include <tf2c>
 #include <sdktools>
+#include <scp>
 
 public Plugin myinfo = {
 	name = "Zensitive",
@@ -29,6 +30,20 @@ public void OnPluginStart() {
 public void OnPluginEnd() {
 	CloseHandle(PrefConsented)
 	CloseHandle(PrefConsentedMsg)
+}
+
+public Action OnChatMessage_Pre(&author, Handle:recipients, String:name[], String:message[]) {
+	char msgbuf[255]
+	strcopy(msgbuf, sizeof(msgbuf), message)
+
+	StripQuotes(msgbuf)
+	TrimString(msgbuf)
+
+	if (msgbuf[0] == ';') {
+		return Plugin_Stop
+	}
+
+	return Plugin_Handled
 }
 
 Action CmdNeverConsent(int client, int args) {
