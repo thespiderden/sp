@@ -35,6 +35,11 @@ Action cmdCond(int client, int args, remove=false) {
 		return Plugin_Handled
 	}
 
+	if (cond < 0 || cond > 134) {
+		PrintToChat(client, "[Condify] Invalid condition number. Must be between 0-134")
+		return Plugin_Handled
+	}
+
 	char targetBuf[MAX_TARGET_LENGTH]
 	GetCmdArg(1, targetBuf, sizeof(targetBuf))
 
