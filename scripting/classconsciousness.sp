@@ -34,12 +34,12 @@ public OnPluginStart() {
 	HookEvent("teamplay_round_start", onRoundStart)
 }
 
-public Action cmdClasses(int client, int args) {
+Action cmdClasses(int client, int args) {
 	printClasses()
 	return Plugin_Handled
 }
 
-public Action cmdRoll(int args) {
+Action cmdRoll(int args) {
 	if (!Enabled.BoolValue) {
 		PrintToServer("[CC] Please enable the plugin if you wish to use sm_cc_roll.")
 		return Plugin_Handled
@@ -51,7 +51,7 @@ public Action cmdRoll(int args) {
 	return Plugin_Handled
 }
 
-public Action cmdChangeClass(int args) {
+Action cmdChangeClass(int args) {
 	if (!Enabled.BoolValue) {
 		PrintToServer("[CC] Please enable the plugin if you wish to use sm_cc_change.")
 		return Plugin_Handled

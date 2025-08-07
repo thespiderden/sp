@@ -12,24 +12,24 @@ public Plugin myinfo = {
 	url = "https://codeberg.org/moonspub/sp"
 }
 
-Handle PrefConsentedMsg
-Handle PrefConsented
+Handle prefConsentedMsg
+Handle prefConsented
 
 public void OnPluginStart() {
-	PrefConsentedMsg = RegClientCookie("zensitive.consent.message", "User consented to seeing/sending sensitive messages, and attests that they are eighteen or older.", CookieAccess_Protected)
-	PrefConsented = RegClientCookie("zensitive.consent", "Currently unused, for a general consent in the future, aside from setting to 'never' to act as a ban from ever consenting for any type.", CookieAccess_Protected)
+	prefConsentedMsg = RegClientCookie("zensitive.consent.message", "User consented to seeing/sending sensitive messages, and attests that they are eighteen or older.", CookieAccess_Protected)
+	prefConsented = RegClientCookie("zensitive.consent", "Currently unused, for a general consent in the future, aside from setting to 'never' to act as a ban from ever consenting for any type.", CookieAccess_Protected)
 
-	RegConsoleCmd("say", CmdSay)
-	RegConsoleCmd("say_team", CmdSayTeam)
-	RegConsoleCmd("sm_sensitive", CmdSensitive, "Shows a dialog to enable/disable viewing/sending sensitive messages")
+	RegConsoleCmd("say", cmdSay)
+	RegConsoleCmd("say_team", cmdSayTeam)
+	RegConsoleCmd("sm_sensitive", cmdSensitive, "Shows a dialog to enable/disable viewing/sending sensitive messages")
 
-	RegAdminCmd("sm_zensitive_never", CmdNeverConsent, ADMFLAG_BAN, "Makes it so a user cannot ever agree to seeing sensitive messages, and revokes if enabled. Steam ID in quotes.")
-	RegAdminCmd("sm_zensitive_reset", CmdResetConsent, ADMFLAG_UNBAN, "Resets agree values to default for a given Steam ID. Steam ID in quotes.")
+	RegAdminCmd("sm_zensitive_never", cmdNeverConsent, ADMFLAG_BAN, "Makes it so a user cannot ever agree to seeing sensitive messages, and revokes if enabled. Steam ID in quotes.")
+	RegAdminCmd("sm_zensitive_reset", cmdResetConsent, ADMFLAG_UNBAN, "Resets agree values to default for a given Steam ID. Steam ID in quotes.")
 }
 
 public void OnPluginEnd() {
-	CloseHandle(PrefConsented)
-	CloseHandle(PrefConsentedMsg)
+	CloseHandle(prefConsented)
+	CloseHandle(prefConsentedMsg)
 }
 
 public Action OnChatMessage_Pre(&author, Handle:recipients, String:name[], String:message[]) {
@@ -46,7 +46,7 @@ public Action OnChatMessage_Pre(&author, Handle:recipients, String:name[], Strin
 	return Plugin_Handled
 }
 
-Action CmdNeverConsent(int client, int args) {
+Action cmdNeverConsent(int client, int args) {
 	if (args == 0) {
 		PrintToConsole(client, "No user ID supplied.")
 	}
@@ -54,12 +54,12 @@ Action CmdNeverConsent(int client, int args) {
 	char id[MAX_AUTHID_LENGTH]
 	GetCmdArg(1, id, sizeof(id))
 
-	SetAuthIdCookie(id, PrefConsented, "never")
-	SetAuthIdCookie(id, PrefConsentedMsg, "n")
+	SetAuthIdCookie(id, prefConsented, "never")
+	SetAuthIdCookie(id, prefConsentedMsg, "n")
 	return Plugin_Handled
 }
 
-Action CmdResetConsent(int client, int args) {
+Action cmdResetConsent(int client, int args) {
 	if (args == 0) {
 		PrintToConsole(client, "No user ID supplied.")
 	}
@@ -67,20 +67,20 @@ Action CmdResetConsent(int client, int args) {
 	char id[MAX_AUTHID_LENGTH]
 	GetCmdArg(1, id, sizeof(id))
 
-	SetAuthIdCookie(id, PrefConsented, "")
-	SetAuthIdCookie(id, PrefConsentedMsg, "n")
+	SetAuthIdCookie(id, prefConsented, "")
+	SetAuthIdCookie(id, prefConsentedMsg, "n")
 	return Plugin_Handled
 }
 
-Action CmdSay(int client, int args) {
-	return cmdSay(client, args)
+Action cmdSay(int client, int args) {
+	return _cmdSay(client, args)
 }
 
-Action CmdSayTeam(int client, int args) {
-	return cmdSay(client, args, true)
+Action cmdSayTeam(int client, int args) {
+	return _cmdSay(client, args, true)
 }
 
-Action cmdSay(int client, int args, team=false) {
+Action _cmdSay(int client, int args, team=false) {
 	if (IsFakeClient(client)) {
 		return Plugin_Continue
 	}
@@ -107,7 +107,7 @@ Action cmdSay(int client, int args, team=false) {
 	}
 
 	char cookiebuf[2]
-	GetClientCookie(client, PrefConsentedMsg, cookiebuf, sizeof(cookiebuf))
+	GetClientCookie(client, prefConsentedMsg, cookiebuf, sizeof(cookiebuf))
 
 	if (cookiebuf[0] != 'y') {
 		PrintToChat(client, "[zensitive] You have not agreed to sending/viewing sensitive messages. Please run the !sensitive command if you wish to send or see them.", cookiebuf)
@@ -148,7 +148,7 @@ Action cmdSay(int client, int args, team=false) {
 			continue
 		}
 
-		GetClientCookie(i, PrefConsentedMsg, cookiebuf, sizeof(cookiebuf))
+		GetClientCookie(i, prefConsentedMsg, cookiebuf, sizeof(cookiebuf))
 
 		if (cookiebuf[0] == 'y') {
 			PrintToChat(i, fmted)
@@ -160,33 +160,33 @@ Action cmdSay(int client, int args, team=false) {
 	return Plugin_Handled
 }
 
-Action CmdSensitive(int client, int args) {
+Action cmdSensitive(int client, int args) {
 	if (!AreClientCookiesCached(client)) {
 		PrintToChat(client, "[zensitive] Error: Clientprefs have not loaded, cannot open consent window.")
 		return Plugin_Handled
 	}
 
 	char cookiebuf[6]
-	GetClientCookie(client, PrefConsented, cookiebuf, sizeof(cookiebuf))
+	GetClientCookie(client, prefConsented, cookiebuf, sizeof(cookiebuf))
 
 	if (StrEqual(cookiebuf, "never", false)) {
 		PrintToChat(client, "[zensitive] You are forbidden from using sensitive messages. Submit a ticket for more information.")
 		return Plugin_Handled
 	}
 
-	GetClientCookie(client, PrefConsentedMsg, cookiebuf, sizeof(cookiebuf))
+	GetClientCookie(client, prefConsentedMsg, cookiebuf, sizeof(cookiebuf))
 
 	Menu consentMenu
 
 	switch (cookiebuf[0]) {
 		case 'y': {
-			consentMenu = new Menu(RevokeMenuCallback)
+			consentMenu = new Menu(revokeMenuCallback)
 			consentMenu.SetTitle("Would you like to disable the viewing/sending of sensitive messages?")
 			consentMenu.AddItem("revoke", "Yes")
 		}
 
 		default: {
-			consentMenu = new Menu(ConsentMenuCallback)
+			consentMenu = new Menu(consentMenuCallback)
 			consentMenu.SetTitle("This will enable the viewing/sending of sensitive messages. \nSensitive messages may contain sexual/adult content, \nand are only visible to other users who have opted in.\n")
 			consentMenu.AddItem("consent", "I wish to see sensitive messages, and I am over the age of eighteen.")
 		}
@@ -199,7 +199,7 @@ Action CmdSensitive(int client, int args) {
 	return Plugin_Handled
 }
 
-int ConsentMenuCallback(Menu menu, MenuAction action, int param1, int param2) {
+int consentMenuCallback(Menu menu, MenuAction action, int param1, int param2) {
 	switch (action) {
 		case MenuAction_Select: {
 			// There is one option, so selected will always mean consented
@@ -208,7 +208,7 @@ int ConsentMenuCallback(Menu menu, MenuAction action, int param1, int param2) {
 				return 0
 			}
 
-			SetClientCookie(param1, PrefConsentedMsg, "y")
+			SetClientCookie(param1, prefConsentedMsg, "y")
 			PrintToChat(param1, "[zensitive] You have opted-in to seeing sensitive messages. Type !sensitive to opt-out. To send a sensitive message, add a semicolon (;) to the beginning of your message.")
 		}
 
@@ -220,7 +220,7 @@ int ConsentMenuCallback(Menu menu, MenuAction action, int param1, int param2) {
 	return 0
 }
 
-int RevokeMenuCallback(Menu menu, MenuAction action, int param1, int param2) {
+int revokeMenuCallback(Menu menu, MenuAction action, int param1, int param2) {
 	switch (action) {
 		case MenuAction_Select: {
 			// There is one option, so selected will always mean revoked
@@ -229,7 +229,7 @@ int RevokeMenuCallback(Menu menu, MenuAction action, int param1, int param2) {
 				return 0
 			}
 
-			SetClientCookie(param1, PrefConsentedMsg, "n")
+			SetClientCookie(param1, prefConsentedMsg, "n")
 			PrintToChat(param1, "[zensitive] You have opted-out of seeing sensitive messages. Type !sensitive to opt back in.")
 		}
 
