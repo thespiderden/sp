@@ -88,13 +88,13 @@ Action _cmdSay(int client, int args, team=false) {
 	char msg[256]
 	GetCmdArgString(msg, sizeof(msg))
 	StripQuotes(msg)
+	TrimString(msg)
 
 	if (msg[0] != ';') {
 		return Plugin_Continue
 	}
 
 	msg[0] = ' '
-
 	TrimString(msg)
 
 	if (msg[0] == '\0') {
