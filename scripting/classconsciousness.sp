@@ -1,7 +1,6 @@
 #include <sourcemod>
 #include <tf2c>
 #include <sdktools>
-#include <sdkhooks>
 
 public Plugin myinfo = {
 	name = "Class Consciousness",
