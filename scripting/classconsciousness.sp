@@ -1,6 +1,7 @@
 #include <sourcemod>
 #include <tf2c>
 #include <sdktools>
+#include <sdkhooks>
 
 public Plugin myinfo = {
 	name = "Class Consciousness",
@@ -13,8 +14,12 @@ public Plugin myinfo = {
 char classStr[][]  = {"", "Scout", "Sniper", "Soldier", "Demo", "Medic", "Heavy", "Pyro", "Spy", "Engineer", "Civilian"}
 TFClassType classes[6]
 
+int vips[TFTeam_COUNT]
+
 ConVar Enabled
 ConVar Rolls
+
+Handle sdkEquipCall
 
 public OnPluginStart() {
 	Enabled = CreateConVar("sm_cc_enable", "0", "Toggles the enforcement of classes.")
@@ -25,21 +30,85 @@ public OnPluginStart() {
 	// In the case someone has rolls disabled on startup, have a default value.
 	rollClasses(true)
 
-	RegServerCmd("sm_cc_change", cmdChangeClass, "Changes the class of a particular team. sm_cc_change <team> <class>")
-	RegServerCmd("sm_cc_roll", cmdRoll, "Rolls a new set of classes, bypassing sm_cc_rolls 0.")
+	RegAdminCmd("sm_cc_change", cmdChangeClass, ADMFLAG_ROOT, "Changes the class of a particular team. sm_cc_change <team> <class>")
+	RegAdminCmd("sm_cc_roll", cmdRoll, ADMFLAG_ROOT, "Rolls a new set of classes, bypassing sm_cc_rolls 0.")
 
 	RegConsoleCmd("sm_classes", cmdClasses)
 
-	HookEvent("player_spawn", onPlayerSpawn)
+	RegServerCmd("sm_cc_roll", cmdRollServer, "Rolls a new set of classes, bypassing sm_cc_rolls 0.") // hotfix, should be cleaned up later
+
+	HookEvent("player_spawn", checkPlayerEvent)
 	HookEvent("teamplay_round_start", onRoundStart)
+	HookEvent("vip_assigned", onVIPAssigned)
+	HookEvent("post_inventory_application", checkPlayerEvent)
+
+	GameData gameConf = LoadGameConfigFile("sdktools.games/game.tf2classic")
+	if (gameConf == INVALID_HANDLE) {
+		SetFailState("[CC] Failed to load TF2C gamedata file! Do you have TF2C Tools installed?")
+		return
+	}
+
+	StartPrepSDKCall(SDKCall_Player)
+
+	if (!PrepSDKCall_SetFromConf(gameConf, SDKConf_Virtual, "WeaponEquip")) {
+		SetFailState("[CC] Failed to load TF2C equip virtual function! Is TF2C Tools up-to-date?")
+		return
+	}
+
+	PrepSDKCall_AddParameter(SDKType_CBaseEntity, SDKPass_Pointer)
+
+	sdkEquipCall = EndPrepSDKCall()
+
+	if (!currentlyVip()) {
+		if (Enabled.BoolValue) {
+			printClasses("Plugin loaded")
+			updatePlayerClasses()
+		}
+		return
+	}
+
+	// Hack: Because there is no way to get the VIP outside of events, we restart the round
+	// to force reassign a VIP.
+	SetConVarInt(FindConVar("mp_restartgame"), 1)
+}
+
+public OnPluginEnd() {
+	// Cleanup so that the VIP is changed back
+	if (currentlyVip()) {
+		SetConVarInt(FindConVar("mp_restartgame"), 1)
+	}
+}
+
+public void OnMapStart() {
+	for (int i = 0; i < sizeof(vips); i++) {
+		vips[i] = 0
+	}
 }
 
 Action cmdClasses(int client, int args) {
-	printClasses()
+	PrintToChat(client,
+		"[CC] RED %s vs. BLU %s vs. GRN %s vs. YLW %s",
+		classStr[classes[TFTeam_Red]],
+		classStr[classes[TFTeam_Blue]],
+		classStr[classes[TFTeam_Green]],
+		classStr[classes[TFTeam_Yellow]]
+	)
 	return Plugin_Handled
 }
 
-Action cmdRoll(int args) {
+Action cmdRoll(int client, int args) {
+	if (!Enabled.BoolValue) {
+		PrintToConsole(client, "[CC] Please enable the plugin if you wish to use sm_cc_roll.")
+		return Plugin_Handled
+	}
+
+	rollClasses(true)
+	updatePlayerClasses()
+	printClasses("Re-rolled")
+	return Plugin_Handled
+}
+
+Action cmdRollServer(int args) {
 	if (!Enabled.BoolValue) {
 		PrintToServer("[CC] Please enable the plugin if you wish to use sm_cc_roll.")
 		return Plugin_Handled
@@ -51,7 +120,7 @@ Action cmdRoll(int args) {
 	return Plugin_Handled
 }
 
-Action cmdChangeClass(int args) {
+Action cmdChangeClass(int client, int args) {
 	if (!Enabled.BoolValue) {
 		PrintToServer("[CC] Please enable the plugin if you wish to use sm_cc_change.")
 		return Plugin_Handled
@@ -114,6 +183,15 @@ Action cmdChangeClass(int args) {
 	return Plugin_Handled
 }
 
+void onVIPAssigned(Event event, char[] name, bool dontBroadcoast) {
+	int userid = event.GetInt("userid")
+	int team = event.GetInt("team")
+	int client = GetClientOfUserId(userid)
+	vips[team] = client
+
+	return
+}
+
 void onEnabledChange(ConVar cvar, char[] oldv, char[] newv) {
 	if (StrEqual(oldv, newv, false)) {
 		return
@@ -126,6 +204,17 @@ void onEnabledChange(ConVar cvar, char[] oldv, char[] newv) {
 		updatePlayerClasses()
 		printClasses("Class restrictions enabled")
 	}
+}
+
+bool currentlyVip() {
+	char mapBuf[6]
+	GetCurrentMap(mapBuf, sizeof(mapBuf))
+
+	if (StrContains(mapBuf, "vip_") != -1 || StrContains(mapBuf, "vipr_") != -1) {
+		return true
+	}
+
+	return false
 }
 
 void printClasses(char[] msg="Classes") {
@@ -142,21 +231,37 @@ void printClasses(char[] msg="Classes") {
 void onRoundStart(Event event, char[] name, bool dontBroadcast) {
 	rollClasses()
 	if (Enabled.BoolValue == true) {
-		PrintToChatAll(
-			"[CC] New Round: RED %s vs. BLU %s vs. GRN %s vs. YLW %s",
-			classStr[classes[TFTeam_Red]],
-			classStr[classes[TFTeam_Blue]],
-			classStr[classes[TFTeam_Green]],
-			classStr[classes[TFTeam_Yellow]]
-		)
+		printClasses("New Round")
 		updatePlayerClasses()
 	}
 }
 
-void onPlayerSpawn(Event event, char[] name, bool dontBroadcast) {
-	if (Enabled.BoolValue == true) {
-		ensureClientClass(GetClientOfUserId(event.GetInt("userid")))
+void checkPlayerEvent(Event event, char[] name, bool dontBroadcast) {
+	if (!Enabled.BoolValue) {
+		return
 	}
+
+	int client = GetClientOfUserId(event.GetInt("userid"))
+	ensureClientClass(client)
+
+	int team = TF2_GetClientTeam(client)
+
+	if (vips[team] != client) {
+		return
+	}
+
+	if (TF2_GetPlayerClass(client) == TFClass_Civilian) {
+//		TF2_AddCondition(client, 122)
+		return
+	}
+
+	TF2_RemoveAllWeapons(client)
+
+	int umbrella = CreateEntityByName("tf_weapon_umbrella")
+	DispatchSpawn(umbrella)
+	SDKCall(sdkEquipCall, client, umbrella)
+
+	SetEntPropEnt(client, Prop_Send, "m_hActiveWeapon", umbrella)
 }
 
 void rollClasses(force=false) {
