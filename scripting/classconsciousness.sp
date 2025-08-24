@@ -17,6 +17,7 @@ int vips[TFTeam_COUNT]
 
 ConVar Enabled
 ConVar Rolls
+ConVar Uniroll
 
 Handle sdkEquipCall
 
@@ -25,6 +26,8 @@ public OnPluginStart() {
 	Enabled.AddChangeHook(onEnabledChange)
 
 	Rolls = CreateConVar("sm_cc_rolls", "1", "Whether or not the plugin re-rolls classes on round change and other situations.")
+
+	Uniroll = CreateConVar("sm_cc_unirolls", "0", "If enabled, rolls a single class for all teams.")
 
 	// In the case someone has rolls disabled on startup, have a default value.
 	rollClasses(true)
@@ -95,21 +98,17 @@ Action cmdClasses(int client, int args) {
 	return Plugin_Handled
 }
 
-Action cmdRoll(int client, int args) {
-	if (!Enabled.BoolValue) {
-		PrintToConsole(client, "[CC] Please enable the plugin if you wish to use sm_cc_roll.")
-		return Plugin_Handled
-	}
-
-	rollClasses(true)
-	updatePlayerClasses()
-	printClasses("Re-rolled")
-	return Plugin_Handled
+Action cmdRollServer(int args) {
+	return cmdRoll(0, args)
 }
 
-Action cmdRollServer(int args) {
+Action cmdRoll(int client, int args) {
 	if (!Enabled.BoolValue) {
-		PrintToServer("[CC] Please enable the plugin if you wish to use sm_cc_roll.")
+		if (client == 0) {
+			PrintToConsole(client, "[CC] Please enable the plugin if you wish to use sm_cc_roll.")
+		} else {
+			PrintToServer("[CC] Please enable the plugin if you wish to use sm_cc_roll.")
+		}
 		return Plugin_Handled
 	}
 
@@ -264,11 +263,20 @@ void checkPlayerEvent(Event event, char[] name, bool dontBroadcast) {
 }
 
 void rollClasses(force=false) {
-	if (Rolls.BoolValue || force) {
-		classes[TFTeam_Blue] = GetRandomInt(1, 10)
-		classes[TFTeam_Red] = GetRandomInt(1, 10)
-		classes[TFTeam_Green] = GetRandomInt(1, 10)
-		classes[TFTeam_Yellow] = GetRandomInt(1, 10)
+	if (!Rolls.BoolValue && !force) {
+		return
+	}
+
+	classes[TFTeam_Red] = GetRandomInt(1, 10)
+	classes[TFTeam_Blue] = GetRandomInt(1, 10)
+	classes[TFTeam_Green] = GetRandomInt(1, 10)
+	classes[TFTeam_Yellow] = GetRandomInt(1, 10)
+
+	if (Uniroll.BoolValue) {
+		TFClassType class = classes[TFTeam_Red]
+		classes[TFTeam_Blue] = class
+		classes[TFTeam_Green] = class
+		classes[TFTeam_Yellow] = class
 	}
 }
 
@@ -300,9 +308,6 @@ void updatePlayerClasses() {
 				killClientEntByProp("obj_teleporter", "m_hBuilder", i, 2)
 				killClientEntByProp("obj_sentrygun", "m_hBuilder", i, 1)
 				killClientEntByProp("obj_jumppad", "m_hBuilder", i, 2)
-			}
-			case TFClass_Spy: {
-				killClientEntByProp("obj_attachment_sapper", "m_hOwner", i)
 			}
 			case TFClass_DemoMan: {
 				killClientEntByProp("sticky", "m_hThrower", i, 8)
