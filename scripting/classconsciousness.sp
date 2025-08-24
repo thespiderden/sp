@@ -104,7 +104,7 @@ Action cmdRollServer(int args) {
 
 Action cmdRoll(int client, int args) {
 	if (!Enabled.BoolValue) {
-		if (client == 0) {
+		if (client != 0) {
 			PrintToConsole(client, "[CC] Please enable the plugin if you wish to use sm_cc_roll.")
 		} else {
 			PrintToServer("[CC] Please enable the plugin if you wish to use sm_cc_roll.")
