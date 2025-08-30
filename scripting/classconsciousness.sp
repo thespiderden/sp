@@ -315,6 +315,12 @@ void updatePlayerClasses() {
 		}
 
 		TF2_RespawnPlayer(i)
+
+		// Hack: If not done, Engineer cannot build on spawn. Need to investigate further
+		// as previous version didn't have this bug. For now this will work.
+		if (classes[GetClientTeam(i)] == TFClass_Engineer) {
+			TF2_RegeneratePlayer(i)
+		}
 	}
 }
 
