@@ -41,7 +41,7 @@ public OnPluginStart() {
 
 	RegConsoleCmd("sm_classes", cmdClasses)
 
-	RegServerCmd("sm_cc_roll", cmdRollServer, "Rolls a new set of classes, bypassing sm_cc_rolls 0.") // hotfix, should be cleaned up later
+	RegServerCmd("sm_cc_roll", cmdRollServer, "Rolls a new set of classes, bypassing sm_cc_rolls 0.")
 
 	HookEvent("player_spawn", checkPlayerEvent)
 	HookEvent("teamplay_round_start", onRoundStart)
