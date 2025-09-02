@@ -15,6 +15,7 @@ public Plugin myinfo = {
 Handle prefOldConsentedMsg
 Handle prefConsentedMsg
 Handle prefConsented
+Handle prefHideHidden
 
 bool viewedConsent[MAXPLAYERS]
 
@@ -22,10 +23,12 @@ public void OnPluginStart() {
 	prefOldConsentedMsg = RegClientCookie("zensitive.consent.message", "Defunct chat message cookie. No functionality.", CookieAccess_Protected)
 	prefConsentedMsg = RegClientCookie("zensitive.consent.chat", "Consented to sensitive chat messages.", CookieAccess_Protected)
 	prefConsented = RegClientCookie("zensitive.consent", "Currently unused, for a general consent in the future, aside from setting to 'never' to act as a ban from ever consenting for any type.", CookieAccess_Protected)
+	prefHideHidden = RegClientCookie("zensitive.hide.chat", "Hides hidden sensitive chat messages", CookieAccess_Public)
 
 	RegConsoleCmd("say", cmdSay)
 	RegConsoleCmd("say_team", cmdSayTeam)
 	RegConsoleCmd("sm_sensitive", cmdSensitive, "Shows a dialog to enable/disable viewing/sending sensitive messages")
+	RegConsoleCmd("sm_hidehidden", cmdHideHidden, "Hide hidden sensitive chat messages")
 	RegConsoleCmd("sm_iam18orolderandwishtoseesensitivechatmessages", cmdConsent, "Consent to sensitive messages after running sm_sensitive")
 
 	RegAdminCmd("sm_zensitive_never", cmdNeverConsent, ADMFLAG_BAN, "Makes it so a user cannot ever agree to seeing sensitive messages, and revokes if enabled. Steam ID in quotes.")
@@ -70,6 +73,26 @@ Action cmdConsent(int client, int args) {
 	SetClientCookie(client, prefConsentedMsg, "y")
 	PrintToChat(client, "[zensitive] You have opted-in to seeing sensitive chat messages. Type !sensitive to opt out. To send a sensitive message, add a semicolon (;) to the beginning of your message.")
 
+	return Plugin_Handled
+}
+
+Action cmdHideHidden(int client, int args) {
+	if (!AreClientCookiesCached(client)) {
+		PrintToChat(client, "[zensitive] Error: Clientprefs have not loaded, cannot change setting.")
+		return Plugin_Handled
+	}
+
+	char cookiebuf[6]
+	GetClientCookie(client, prefHideHidden, cookiebuf, sizeof(cookiebuf))
+
+	if (cookiebuf[0] == 'y') {
+		SetClientCookie(client, prefHideHidden, "n")
+		PrintToChat(client, "[zensitive] Re-enabled seeing hidden messages.")
+		return Plugin_Handled
+	}
+
+	SetClientCookie(client, prefHideHidden, "y")
+	PrintToChat(client, "[zensitive] Hidden sensitive chat messages are hidden. Type !hidehidden again to see them. If sensitive chat is enabled, this won't have an effect until you disable it.")
 	return Plugin_Handled
 }
 
@@ -169,9 +192,15 @@ Action _cmdSay(int client, int args, team=false) {
 
 		if (cookiebuf[0] == 'y') {
 			PrintToChat(i, fmted)
-		} else {
-			PrintToChat(i, censfmted)
+			continue
 		}
+
+		GetClientCookie(i, prefHideHidden, cookiebuf, sizeof(cookiebuf))
+		if (cookiebuf[0] == 'y') {
+			continue
+		}
+
+		PrintToChat(i, censfmted)
 	}
 
 	return Plugin_Handled
