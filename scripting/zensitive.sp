@@ -56,6 +56,8 @@ Action cmdNeverConsent(int client, int args) {
 
 	SetAuthIdCookie(id, prefConsented, "never")
 	SetAuthIdCookie(id, prefConsentedMsg, "n")
+
+	PrintToConsole(client, "[zensitive] Added ban for Steam ID.")
 	return Plugin_Handled
 }
 
