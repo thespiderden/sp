@@ -4,11 +4,15 @@
 #include <sdktools>
 #include <scp>
 
+#if !defined(VERSION)
+	#define VERSION "unknown"
+#endif
+
 public Plugin myinfo = {
 	name = "Zensitive",
 	author = "webb <w@spiderden.org>",
 	description = "Mark messages as sensitive.",
-	version = "v0.0.0",
+	version = VERSION,
 	url = "https://codeberg.org/moonspub/sp"
 }
 

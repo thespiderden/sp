@@ -2,11 +2,15 @@
 #include <tf2c>
 #include <sdktools>
 
+#if !defined(VERSION)
+	#define VERSION "unknown"
+#endif
+
 public Plugin myinfo = {
 	name = "Class Consciousness",
 	author = "webb <w@spiderden.org>",
 	description = "A class enforcer.",
-	version = "v0.0.0",
+	version = VERSION,
 	url = "https://codeberg.org/moonspub/sp"
 }
 
@@ -315,12 +319,7 @@ void updatePlayerClasses() {
 		}
 
 		TF2_RespawnPlayer(i)
-
-		// Hack: If not done, Engineer cannot build on spawn. Need to investigate further
-		// as previous version didn't have this bug. For now this will work.
-		if (classes[GetClientTeam(i)] == TFClass_Engineer) {
-			TF2_RegeneratePlayer(i)
-		}
+		TF2_RegeneratePlayer(i)
 	}
 }
 

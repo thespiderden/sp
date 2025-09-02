@@ -1,12 +1,12 @@
+.POSIX:
+
 override SPCOMP64="${HOME}/.local/share/sourcemod/scripting/spcomp64"
-classconsciousness: scripting/classconsciousness.sp
-	mkdir -p plugins
-	${SPCOMP64} scripting/classconsciousness.sp -o plugins/classconsciousness.smx
+REF := $(shell ( git describe --tags --exact-match 2>/dev/null || git rev-parse --short HEAD ) | sed 1q)
+VERSION := $(shell (git diff-index --quiet HEAD -- && echo ${REF} || echo ${REF}"*"))
+PLUGINS = $(shell ls scripting/*.sp | xargs -I % basename % .sp)
 
-zensitive: scripting/zensitive.sp
-	mkdir -p plugins
-	${SPCOMP64} scripting/zensitive.sp -o plugins/zensitive.smx
+all: $(PLUGINS)
 
-condify: scripting/condify.sp
+$(PLUGINS):
 	mkdir -p plugins
-	${SPCOMP64} scripting/condify.sp -o plugins/condify.smx
+	${SPCOMP64} scripting/$@.sp VERSION=\"${VERSION}\" -o plugins/$@.smx

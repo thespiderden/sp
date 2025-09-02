@@ -2,11 +2,15 @@
 #include <tf2c>
 #include <sdktools>
 
+#if !defined(VERSION)
+	#define VERSION "unknown"
+#endif
+
 public Plugin myinfo = {
 	name = "Condify",
 	author = "webb <w@spiderden.org>",
 	description = "Condition your friends.",
-	version = "v0.0.0",
+	version = VERSION,
 	url = "https://codeberg.org/moonspub/sp"
 }
 
