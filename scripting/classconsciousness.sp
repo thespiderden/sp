@@ -43,10 +43,10 @@ public OnPluginStart() {
 
 	RegServerCmd("sm_cc_roll", cmdRollServer, "Rolls a new set of classes, bypassing sm_cc_rolls 0.")
 
-	HookEvent("player_spawn", checkPlayerEvent)
+	HookEvent("player_spawn", onPlayerSpawn)
 	HookEvent("teamplay_round_start", onRoundStart)
 	HookEvent("vip_assigned", onVIPAssigned)
-	HookEvent("post_inventory_application", checkPlayerEvent)
+	HookEvent("post_inventory_application", onInventoryUpdate)
 
 	GameData gameConf = LoadGameConfigFile("sdktools.games/game.tf2classic")
 	if (gameConf == INVALID_HANDLE) {
@@ -238,14 +238,21 @@ void onRoundStart(Event event, char[] name, bool dontBroadcast) {
 	}
 }
 
-void checkPlayerEvent(Event event, char[] name, bool dontBroadcast) {
+void onPlayerSpawn(Event event, char[] name, bool dontBroadcast) {
 	if (!Enabled.BoolValue) {
 		return
 	}
 
 	int client = GetClientOfUserId(event.GetInt("userid"))
 	ensureClientClass(client)
+}
 
+void onInventoryUpdate(Event event, char[] name, bool dontBroadcast) {
+	if (!Enabled.BoolValue) {
+		return
+	}
+
+	int client = GetClientOfUserId(event.GetInt("userid"))
 	int team = TF2_GetClientTeam(client)
 
 	if (vips[team] != client) {
@@ -319,7 +326,6 @@ void updatePlayerClasses() {
 		}
 
 		TF2_RespawnPlayer(i)
-		TF2_RegeneratePlayer(i)
 	}
 }
 
