@@ -15,8 +15,8 @@ public Plugin myinfo = {
 }
 
 public void OnPluginStart() {
-	RegAdminCmd("sm_condify", cmdAddCond, ADMFLAG_SLAY, "Adds a condition to player.");
-	RegAdminCmd("sm_decondify", cmdRemoveCond, ADMFLAG_SLAY, "Removes a condition from a player.");
+	RegAdminCmd("sm_condify", cmdAddCond, ADMFLAG_ROOT, "Adds a condition to player.");
+	RegAdminCmd("sm_decondify", cmdRemoveCond, ADMFLAG_ROOT, "Removes a condition from a player.");
 }
 
 Action cmdAddCond(int client, int args) {
