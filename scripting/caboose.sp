@@ -34,35 +34,36 @@ Action _cmdID(int client, int args, steamHistory=false) {
 	char target[MAX_TARGET_LENGTH]
 	bool tnIsMl
 
-	int found = ProcessTargetString(targetBuf, client, targets, sizeof(targets), COMMAND_FILTER_NO_BOTS|COMMAND_FILTER_NO_MULTI, target, sizeof(target), tnIsMl)
+	int found = ProcessTargetString(targetBuf, client, targets, sizeof(targets), COMMAND_FILTER_NO_BOTS, target, sizeof(target), tnIsMl)
 	if (found == 0) {
 		PrintToChat(client, "[Caboose] Couldn't find target.")
 		return Plugin_Handled
 	}
-
-	int i
-	for (i = 0; i < found; i++) {
-		char name[MAX_NAME_LENGTH]
-		GetClientName(targets[i], name, sizeof(name))
-
-		char authid[MAX_AUTHID_LENGTH]
-		AuthIdType authtype = AuthId_Steam2
-
-		if (steamHistory) {
-			authtype = AuthId_SteamID64
-		}
-
-		GetClientAuthId(targets[i], authtype, authid, MAX_AUTHID_LENGTH, true)
-
-		char buf[256]
-		if (!steamHistory) {
-			Format(buf, sizeof(buf), "%s -> %s", name, authid)
-		} else {
-			Format(buf, sizeof(buf), "%s -> https://steamhistory.net/id/%s ", name, authid)
-		}
-
-		PrintToChat(client, buf)
+	if (found > 1) {
+		PrintToChat(client, "[Caboose] Multiple targets found.")
+		return Plugin_Handled
 	}
+
+	char name[MAX_NAME_LENGTH]
+	GetClientName(targets[0], name, sizeof(name))
+
+	char authid[MAX_AUTHID_LENGTH]
+	AuthIdType authtype = AuthId_Steam2
+
+	if (steamHistory) {
+		authtype = AuthId_SteamID64
+	}
+
+	GetClientAuthId(targets[0], authtype, authid, MAX_AUTHID_LENGTH, true)
+
+	char buf[256]
+	if (!steamHistory) {
+		Format(buf, sizeof(buf), "%s -> %s", name, authid)
+	} else {
+		Format(buf, sizeof(buf), "%s -> https://steamhistory.net/id/%s ", name, authid)
+	}
+
+	PrintToChat(client, buf)
 
 	return Plugin_Handled
 }
