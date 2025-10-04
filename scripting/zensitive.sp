@@ -1,6 +1,5 @@
 #include <sourcemod>
 #include <clientprefs>
-#include <tf2c>
 #include <sdktools>
 #include <scp>
 
