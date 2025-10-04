@@ -149,6 +149,11 @@ Action _cmdSay(int client, int args, team=false) {
 		return Plugin_Continue
 	}
 
+	if (team) {
+		PrintToChat(client, "[zensitive] Team sensitive chats are not supported.")
+		return Plugin_Handled
+	}
+
 	msg[0] = ' '
 	TrimString(msg)
 
@@ -184,10 +189,6 @@ Action _cmdSay(int client, int args, team=false) {
 	int i
 	for (i = 1; i <=MaxClients; i++) {
 		if (!IsClientConnected(i) || IsFakeClient(i) || !AreClientCookiesCached(i)) {
-			continue
-		}
-
-		if (team && GetClientTeam(i) != GetClientTeam(client)) {
 			continue
 		}
 
