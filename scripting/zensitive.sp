@@ -1,7 +1,7 @@
 #include <sourcemod>
 #include <clientprefs>
 #include <sdktools>
-#include <scp>
+#include <metachatprocessor>
 
 #if !defined(VERSION)
 	#define VERSION "unknown"
@@ -39,16 +39,20 @@ public void OnPluginStart() {
 }
 
 public void OnPluginEnd() {
-	CloseHandle(prefOldConsentedMsg)
-	CloseHandle(prefConsented)
-	CloseHandle(prefConsentedMsg)
+	MCP_UnhookChatMessage(mcpEarlyBlockHook, mcpHookEarly)
+}
+
+public void OnLibraryAdded(const char[] name){
+	if (StrEqual(name, "metachatprocessor")) {
+		MCP_HookChatMessage(mcpEarlyBlockHook, mcpHookEarly)
+	}
 }
 
 public void OnClientDisconnect(int client) {
 	viewedConsent[client] = false
 }
 
-public Action OnChatMessage_Pre(&author, Handle:recipients, String:name[], String:message[]) {
+public Action mcpEarlyBlockHook(int& sender, ArrayList recipients, mcpSenderFlag& senderflags, mcpTargetGroup& targetgroup, mcpMessageOption& options, char[] targetgroupColor, char[] name, char[] message) {
 	char msgbuf[255]
 	strcopy(msgbuf, sizeof(msgbuf), message)
 
