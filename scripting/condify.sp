@@ -11,7 +11,7 @@ public Plugin myinfo = {
 	author = "webb <w@spiderden.org>",
 	description = "Condition your friends.",
 	version = VERSION,
-	url = "https://codeberg.org/moonspub/sp"
+	url = "https://codeberg.org/spiderden/sp"
 }
 
 public void OnPluginStart() {
