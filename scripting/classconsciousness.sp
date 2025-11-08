@@ -11,7 +11,7 @@ public Plugin myinfo = {
 	author = "webb <w@spiderden.org>",
 	description = "A class enforcer.",
 	version = VERSION,
-	url = "https://codeberg.org/moonspub/sp"
+	url = "https://codeberg.org/spiderden/sp"
 }
 
 char classStr[][]  = {"", "Scout", "Sniper", "Soldier", "Demo", "Medic", "Heavy", "Pyro", "Spy", "Engineer", "Civilian"}

@@ -12,7 +12,7 @@ public Plugin myinfo = {
 	author = "webb <w@spiderden.org>",
 	description = "Mark messages as sensitive.",
 	version = VERSION,
-	url = "https://codeberg.org/moonspub/sp"
+	url = "https://codeberg.org/spiderden/sp"
 }
 
 Handle prefOldConsentedMsg

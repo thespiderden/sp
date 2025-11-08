@@ -10,7 +10,7 @@ public Plugin myinfo = {
 	author = "webb <w@spiderden.org>",
 	description = "A plugin with miscellanious tools for admins.",
 	version = VERSION,
-	url = "https://codeberg.org/moonspub/sp"
+	url = "https://codeberg.org/spiderden/sp"
 }
 
 public OnPluginStart() {
