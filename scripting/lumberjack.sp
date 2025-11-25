@@ -60,11 +60,13 @@ public Action OnClientSayCommand(int client, const char[] command, const char[] 
 		return Plugin_Continue
 	}
 
-	char idbuf[MAX_AUTHID_LENGTH]
-	GetClientAuthString(client, idbuf, sizeof(idbuf))
+	char idbuf[MAX_AUTHID_LENGTH] = "Console"
+	char namebuf[MAX_NAME_LENGTH] = "Server"
 
-	char namebuf[MAX_NAME_LENGTH]
-	GetClientName(client, namebuf, sizeof(namebuf))
+	if (client != 0) {
+		GetClientAuthString(client, idbuf, sizeof(idbuf))
+		GetClientName(client, namebuf, sizeof(namebuf))
+	}
 
 	char messagebuf[512]
 	Format(messagebuf, sizeof(messagebuf), "**%s** (``%s``) : %s", namebuf, idbuf, sArgs)
