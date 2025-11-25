@@ -37,7 +37,7 @@ void sendWebhook(char[] msg) {
 }
 
 void onRequestComplete(HTTPResponse response, any value) {
-	if (response.Status == HTTPStatus_OK) {
+	if (response.Status == HTTPStatus_OK || response.Status == HTTPSTatus_NoContent) {
 		return
 	}
 
