@@ -13,19 +13,36 @@ public Plugin myinfo = {
 }
 
 ConVar webhookURL
+ConVar callWebhookURL
+ConVar callWebhookEmoji
 ConVar timeout
 
 public void OnPluginStart() {
-	webhookURL = CreateConVar("sm_lumberjack_webhook", "", "Webhook URL everything is logged to.", FCVAR_PROTECTED)
+	webhookURL = CreateConVar("sm_lumberjack_webhook", "", "Webhook URL chat, and connections is logged to.", FCVAR_PROTECTED)
+	callWebhookURL = CreateConVar("sm_lumberjack_calladmin_webhook", "", "Webhook URL CallAdmin calls are logged to.", FCVAR_PROTECTED)
+	callWebhookEmoji = CreateConVar("sm_lumberjack_calladmin_webhook_emoji", ":point_right:", "Point emoji used for CallAdmin webhooks.", FCVAR_PROTECTED)
 	timeout = CreateConVar("sm_lumberjack_timeout", "15", "Timeout for webhook requests.", FCVAR_PROTECTED)
+
+	RegAdminCmd("sm_lumberjack_calladmin_test", cmdCallAdminTest, Admin_Root)
 }
 
-void sendWebhook(char[] msg) {
+void sendWebhook(char[] msg, ConVar url, pingable=false) {
 	char urlbuf[128]
-	webhookURL.GetString(urlbuf, sizeof(urlbuf))
+	url.GetString(urlbuf, sizeof(urlbuf))
 
-	JSONObject hook = new JSONObject();
-    hook.SetString("content", msg);
+	JSONObject hook = new JSONObject()
+    hook.SetString("content", msg)
+
+    JSONObject allowedPings = new JSONObject()
+    JSONArray parse = new JSONArray()
+
+    if (pingable) {
+    	parse.PushString("everyone")
+    }
+
+    allowedPings.Set("parse", parse)
+
+    hook.Set("allowed_mentions", allowedPings)
 
 	HTTPRequest req = new HTTPRequest(urlbuf)
 	req.Timeout = timeout.IntValue
@@ -34,6 +51,8 @@ void sendWebhook(char[] msg) {
 	req.Post(hook, onRequestComplete)
 
 	delete hook
+	delete allowedPings
+	delete parse
 }
 
 void onRequestComplete(HTTPResponse response, any value) {
@@ -44,7 +63,7 @@ void onRequestComplete(HTTPResponse response, any value) {
 	PrintToServer("[lumberjack] executing webhook got response code %d", response.Status)
 }
 
-bool isPluginOk() {
+bool isWebhookSet() {
 	char urlbuf[2]
 	webhookURL.GetString(urlbuf, sizeof(urlbuf))
 
@@ -56,7 +75,7 @@ bool isPluginOk() {
 }
 
 public Action OnClientSayCommand(int client, const char[] command, const char[] sArgs) {
-	if (!isPluginOk) {
+	if (!isWebhookSet) {
 		return Plugin_Continue
 	}
 
@@ -70,13 +89,13 @@ public Action OnClientSayCommand(int client, const char[] command, const char[] 
 
 	char messagebuf[512]
 	Format(messagebuf, sizeof(messagebuf), "**%s** (``%s``) : %s", namebuf, idbuf, sArgs)
-	sendWebhook(messagebuf)
+	sendWebhook(messagebuf, webhookURL)
 
 	return Plugin_Continue
 }
 
 public void OnClientAuthorized(int client, const char[] auth) {
-	if (!isPluginOk) {
+	if (!isWebhookSet) {
 		return
 	}
 
@@ -89,11 +108,11 @@ public void OnClientAuthorized(int client, const char[] auth) {
 	char messagebuf[256]
 	Format(messagebuf, sizeof(messagebuf), "Connect: **%s** (``%s``)", namebuf, idbuf)
 
-	sendWebhook(messagebuf)
+	sendWebhook(messagebuf, webhookURL)
 }
 
 public void OnClientDisconnect(int client) {
-	if (!isPluginOk) {
+	if (!isWebhookSet) {
 		return
 	}
 
@@ -106,5 +125,56 @@ public void OnClientDisconnect(int client) {
 	char messagebuf[256]
 	Format(messagebuf, sizeof(messagebuf), "Disconnect: **%s** (``%s``)", namebuf, idbuf)
 
-	sendWebhook(messagebuf)
+	sendWebhook(messagebuf, webhookURL)
+}
+
+
+// We only use a couple of constants from the CallAdmin headers.
+// A little copying is better than a little dependency.
+#define REPORTER_CONSOLE 1679124
+#define REASON_MAX_LENGTH 128
+
+Action cmdCallAdminTest(int client, int args) {
+	CallAdmin_OnReportPost(REPORTER_CONSOLE, REPORTER_CONSOLE, "<Test command>")
+    return Plugin_Handled
+}
+
+public void CallAdmin_OnReportPost(int client, int target, const char[] reason) {
+	char url[1024]
+	GetConVarString(callWebhookURL, url, sizeof(url))
+
+	if (url[0] == '\0') {
+	    return
+	}
+
+	char reporter[MAX_NAME_LENGTH+1] = "Console"
+	char reporterID[MAX_AUTHID_LENGTH] = "NONE"
+	char reportee[MAX_NAME_LENGTH+1] = "Console"
+	char reporteeID[MAX_AUTHID_LENGTH] = "NONE"
+
+	if (client != REPORTER_CONSOLE) {
+		GetClientName(client, reporter, sizeof(reporter))
+		GetClientAuthId(client, AuthId_Steam2, reporterID, 21)
+	}
+
+	if (target != REPORTER_CONSOLE) {
+	    GetClientName(target, reportee, sizeof(reportee))
+	    GetClientAuthId(target, AuthId_Steam2, reporteeID, sizeof(reporteeID))
+	}
+
+	char pointSymbol[64]
+	callWebhookEmoji.GetString(pointSymbol, sizeof(pointSymbol))
+
+	char messageBuf[512]
+
+	Format(messageBuf, sizeof(messageBuf), "# Admin requested\n## %s (``%s``) %s %s (``%s``)\n``%s``\n\n@everyone",
+		reporter,
+		reporterID,
+		pointSymbol,
+		reportee,
+		reporteeID,
+		reason
+	)
+
+	sendWebhook(messageBuf, callWebhookURL, true)
 }
