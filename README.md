@@ -56,7 +56,7 @@ Only depends on [ripext](https://github.com/ErikMinekus/sm-ripext), which has an
 
 ### ConVars
 
-``sm_lumberjack_webhook_url <URL in quotes>`` - URL to log connections, disconnections, and chat messages to.
+``sm_lumberjack_webhook <URL in quotes>`` - URL to log connections, disconnections, and chat messages to.
 
 ``sm_lumberjack_calladmin_webhook <URL in quotes>`` - URL to log CallAdmin requests to
 
