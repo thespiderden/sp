@@ -52,7 +52,7 @@ Lumberjack is yet another Discord connection plugin. It has the ability to log c
 
 The intended way to use this plugin is to create a webhook for each individual server, filling out the avatar and nickname as you see fit on Discord's end, and using each unique webhook URL in the server's respective ``server.cfg``.
 
-Only depends on [ripext](https://github.com/ErikMinekus/sm-ripext), which has an official amd64 build, which means that the TF2C Steam version is supported. The plugin has been demonstrated to work on at least one Steam build of TF2C (thanks Moonrider!) If something breaks, please don't hesitate to file an issue (assuming your NDA permits) or DM me, since I don't have access to the Steam beta.
+Only depends on [ripext](https://github.com/ErikMinekus/sm-ripext), which has an official amd64 build, which means that the TF2C Steam version is supported. The plugin has been demonstrated to work on at least one Steam build of TF2C (thanks Moonrider!) If something breaks, please don't hesitate to file an issue or DM me (assuming your NDA permits,) since I don't have access to the Steam beta.
 
 ### ConVars
 
