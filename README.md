@@ -84,4 +84,4 @@ Random utilities for admins.
 
 ``sm_uid <target>`` - Get Steam ID from target
 
-``sm_steamhistory`` - Gets the steamhistory.net URL of one or more players.
+``sm_steamhistory <target>`` - Gets the steamhistory.net URL of one or more players.
