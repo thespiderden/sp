@@ -8,7 +8,7 @@
 #endif
 
 public Plugin myinfo = {
-	name = "Zensitive",
+	name = "Zensitive (Moon's Pub MCP Backport)",
 	author = "webb <w@spiderden.org>",
 	description = "Mark messages as sensitive.",
 	version = VERSION,
