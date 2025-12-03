@@ -192,7 +192,7 @@ Action _cmdSay(int client, int args, team=false) {
 
 	int i
 	for (i = 1; i <=MaxClients; i++) {
-		if (!IsClientConnected(i) || IsFakeClient(i) || !AreClientCookiesCached(i)) {
+		if (!IsClientInGame(i) || IsFakeClient(i) || !AreClientCookiesCached(i)) {
 			continue
 		}
 
