@@ -136,7 +136,7 @@ Action cmdSayTeam(int client, int args) {
 }
 
 Action _cmdSay(int client, int args, team=false) {
-	if (IsFakeClient(client)) {
+	if (client == 0 || IsFakeClient(client)) {
 		return Plugin_Continue
 	}
 
