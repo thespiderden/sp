@@ -16,7 +16,7 @@ TMPDIR := /tmp/sp-export-$(REF)
 release: all
 	rm -rf $(TMPDIR)
 	git clone ./ $(TMPDIR)
-	cd $(TMPDIR); git checkout $(REF); rm -rf .git; rm -rf .gitignore; make
+	cd $(TMPDIR); git checkout $(REF); make; rm -rf .git; rm -rf .gitignore
 	mkdir -p oupt
 	tar -cvf oupt/sp-$(REF).tar -C $(TMPDIR)/ .
 	cd oupt; zstd --rm --force sp-$(REF).tar
