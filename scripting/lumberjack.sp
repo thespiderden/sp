@@ -24,6 +24,8 @@ public void OnPluginStart() {
 	timeout = CreateConVar("sm_lumberjack_timeout", "15", "Timeout for webhook requests.", FCVAR_PROTECTED)
 
 	RegAdminCmd("sm_lumberjack_calladmin_test", cmdCallAdminTest, Admin_Root)
+
+	HookEvent("player_disconnect", eventPlayerDisconnect, EventHookMode_Pre)
 }
 
 void sendWebhook(char[] msg, ConVar url, pingable=false) {
@@ -95,7 +97,7 @@ public Action OnClientSayCommand(int client, const char[] command, const char[] 
 }
 
 public void OnClientAuthorized(int client, const char[] auth) {
-	if (!isWebhookSet) {
+	if (!isWebhookSet || client == 0) {
 		return
 	}
 
@@ -111,8 +113,15 @@ public void OnClientAuthorized(int client, const char[] auth) {
 	sendWebhook(messagebuf, webhookURL)
 }
 
-public void OnClientDisconnect(int client) {
+public void eventPlayerDisconnect(Event event, const char[] name, bool dontBroadcast) {
 	if (!isWebhookSet) {
+		return
+	}
+
+	int userid = event.GetInt("userid")
+	int client = GetClientOfUserId(userid)
+
+	if (client == 0) {
 		return
 	}
 
