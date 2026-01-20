@@ -1,5 +1,5 @@
 #include <sourcemod>
-#include <tf2c>
+#include <tf2>
 #include <sdktools>
 
 #if !defined(VERSION)
