@@ -26,6 +26,60 @@ public void OnPluginStart() {
 	RegAdminCmd("sm_lumberjack_calladmin_test", cmdCallAdminTest, Admin_Root)
 
 	HookEvent("player_disconnect", eventPlayerDisconnect, EventHookMode_Pre)
+
+	CreateTimer(1.0, hookQueueCleanupTimer, _, TIMER_REPEAT)
+}
+
+// For high-frequency things like chat messages/disconnects we use a queue to avoid sending a hook
+// for each little thing.
+char hookQueueBuf[2000]
+int writtenRunes
+int lastWrite // for debouncing, will never be earlier than last send
+int lastSend
+
+Action hookQueueCleanupTimer(Handle timer) {
+	if (!isWebhookSet() || GetTime() - lastWrite < 2 || GetTime() - lastSend < 5 || hookQueueBuf[0] == '\0') {
+		return Plugin_Continue
+	}
+
+	sendQueue()
+
+	return Plugin_Continue
+}
+
+public void OnServerEnterHibernation() {
+	if (isWebhookSet() && hookQueueBuf[0] != '\0') {
+		sendQueue()
+	}
+}
+
+void hookQueueAdd(char[] msg) {
+	int msgsize = strlen(msg)
+	if (msgsize > sizeof(hookQueueBuf)) {
+		PrintToServer("[lumberjack] warning: got message too long for Discord")
+		return
+	}
+
+	if (writtenRunes + msgsize > sizeof(hookQueueBuf)) {
+		sendQueue()
+	}
+
+	writtenRunes += StrCat(hookQueueBuf, sizeof(hookQueueBuf), msg)
+	lastWrite = GetTime()
+
+	if (writtenRunes == sizeof(hookQueueBuf)) {
+		sendQueue()
+	}
+}
+
+void sendQueue() {
+	sendWebhook(hookQueueBuf, webhookURL, false)
+	writtenRunes = 0
+	lastSend = GetTime()
+
+	for (int i = 0; i < sizeof(hookQueueBuf); i++) {
+		hookQueueBuf[i] = '\0'
+	}
 }
 
 void sendWebhook(char[] msg, ConVar url, pingable=false) {
@@ -90,8 +144,8 @@ public Action OnClientSayCommand(int client, const char[] command, const char[] 
 	}
 
 	char messagebuf[512]
-	Format(messagebuf, sizeof(messagebuf), "**%s** (``%s``) : %s", namebuf, idbuf, sArgs)
-	sendWebhook(messagebuf, webhookURL)
+	Format(messagebuf, sizeof(messagebuf), "**%s** (``%s``) : %s\n", namebuf, idbuf, sArgs)
+	hookQueueAdd(messagebuf)
 
 	return Plugin_Continue
 }
@@ -108,9 +162,9 @@ public void OnClientAuthorized(int client, const char[] auth) {
 	GetClientName(client, namebuf, sizeof(namebuf))
 
 	char messagebuf[256]
-	Format(messagebuf, sizeof(messagebuf), "Connect: **%s** (``%s``)", namebuf, idbuf)
+	Format(messagebuf, sizeof(messagebuf), "Connect: **%s** (``%s``)\n", namebuf, idbuf)
 
-	sendWebhook(messagebuf, webhookURL)
+	hookQueueAdd(messagebuf)
 }
 
 public void eventPlayerDisconnect(Event event, const char[] name, bool dontBroadcast) {
@@ -132,9 +186,9 @@ public void eventPlayerDisconnect(Event event, const char[] name, bool dontBroad
 	GetClientName(client, namebuf, sizeof(namebuf))
 
 	char messagebuf[256]
-	Format(messagebuf, sizeof(messagebuf), "Disconnect: **%s** (``%s``)", namebuf, idbuf)
+	Format(messagebuf, sizeof(messagebuf), "Disconnect: **%s** (``%s``)\n", namebuf, idbuf)
 
-	sendWebhook(messagebuf, webhookURL)
+	hookQueueAdd(messagebuf)
 }
 
 
