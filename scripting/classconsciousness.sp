@@ -1,5 +1,6 @@
 #include <sourcemod>
-#include <tf2c>
+#include <tf2>
+#include <tf2_stocks>
 #include <sdktools>
 
 #if !defined(VERSION)
@@ -13,6 +14,12 @@ public Plugin myinfo = {
 	version = VERSION,
 	url = "https://codeberg.org/spiderden/sp"
 }
+
+// Hack: TF2C-Tools compatibility values from their enums
+const int TFTeam_Green = 4
+const int TFTeam_Yellow = 5
+const int TFTeam_COUNT = 6
+const int TFClass_Civilian = 9
 
 char classStr[][]  = {"", "Scout", "Sniper", "Soldier", "Demo", "Medic", "Heavy", "Pyro", "Spy", "Engineer", "Civilian"}
 TFClassType classes[6]
@@ -48,7 +55,7 @@ public OnPluginStart() {
 	HookEvent("vip_assigned", onVIPAssigned)
 	HookEvent("post_inventory_application", onInventoryUpdate)
 
-	GameData gameConf = LoadGameConfigFile("sdktools.games/game.tf2classic")
+	GameData gameConf = LoadGameConfigFile("sdktools/custom/game.tf2classic")
 	if (gameConf == INVALID_HANDLE) {
 		SetFailState("[CC] Failed to load TF2C gamedata file! Do you have TF2C Tools installed?")
 		return
@@ -260,10 +267,11 @@ void onInventoryUpdate(Event event, char[] name, bool dontBroadcast) {
 	}
 
 	if (TF2_GetPlayerClass(client) == TFClass_Civilian) {
-//		TF2_AddCondition(client, 122)
+		TF2_AddCondition(client, 122)
 		return
 	}
 
+/*
 	TF2_RemoveAllWeapons(client)
 
 	int umbrella = CreateEntityByName("tf_weapon_umbrella")
@@ -271,6 +279,7 @@ void onInventoryUpdate(Event event, char[] name, bool dontBroadcast) {
 	SDKCall(sdkEquipCall, client, umbrella)
 
 	SetEntPropEnt(client, Prop_Send, "m_hActiveWeapon", umbrella)
+*/
 }
 
 void rollClasses(force=false) {
