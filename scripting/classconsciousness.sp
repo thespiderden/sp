@@ -55,6 +55,7 @@ public OnPluginStart() {
 	HookEvent("vip_assigned", onVIPAssigned)
 	HookEvent("post_inventory_application", onInventoryUpdate)
 
+	/*
 	GameData gameConf = LoadGameConfigFile("sdktools/custom/game.tf2classic")
 	if (gameConf == INVALID_HANDLE) {
 		SetFailState("[CC] Failed to load TF2C gamedata file! Do you have TF2C Tools installed?")
@@ -71,6 +72,7 @@ public OnPluginStart() {
 	PrepSDKCall_AddParameter(SDKType_CBaseEntity, SDKPass_Pointer)
 
 	sdkEquipCall = EndPrepSDKCall()
+	*/
 
 	if (!currentlyVip()) {
 		if (Enabled.BoolValue) {
