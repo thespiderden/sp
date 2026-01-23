@@ -167,7 +167,7 @@ public void OnClientAuthorized(int client, const char[] auth) {
 	hookQueueAdd(messagebuf)
 }
 
-public void eventPlayerDisconnect(Event event, const char[] name, bool dontBroadcast) {
+void eventPlayerDisconnect(Event event, const char[] name, bool dontBroadcast) {
 	if (!isWebhookSet) {
 		return
 	}
