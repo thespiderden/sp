@@ -10,7 +10,7 @@ To build, use the makefile with SPCOMP64 set to the absolute path to your spcomp
 
 ## Class Consciousness
 
-A stable class wars plugin for TF2C, properly supporting all classes and four-team with no known exploits. Currently only working on the pre-Steam release version of TF2C. Depends on [TF2C Tools](https://github.com/tf2classic/SM-TF2Classic-Tools).
+A stable class wars plugin for TF2C, properly supporting all classes and four-team with no known exploits. Depends on a patched TF2C Sourcemod extension.
 
 Under the hood, it internally stores class values for each team instead of using a ConVar.
 
@@ -52,8 +52,6 @@ Lumberjack is yet another Discord connection plugin. It has the ability to log c
 
 The intended way to use this plugin is to create a webhook for each individual server, filling out the avatar and nickname as you see fit on Discord's end, and using each unique webhook URL in the server's respective ``server.cfg``.
 
-Only depends on [ripext](https://github.com/ErikMinekus/sm-ripext), which has an official amd64 build, which means that the TF2C Steam version is supported. The plugin has been demonstrated to work on at least one Steam build of TF2C (thanks Moonrider!) If something breaks, please don't hesitate to file an issue or DM me (assuming your NDA permits,) since I don't have access to the Steam beta.
-
 ### ConVars
 
 ``sm_lumberjack_webhook <URL in quotes>`` - URL to log connections, disconnections, and chat messages to.
@@ -68,13 +66,13 @@ Only depends on [ripext](https://github.com/ErikMinekus/sm-ripext), which has an
 
 ## Condify
 
-Apply/remove conditions from other players. Currently not working on the TF2C Steam branch. Depends on [TF2C Tools](https://github.com/tf2classic/SM-TF2Classic-Tools).
+Apply/remove conditions from other players. Depends on a patched TF2C Sourcemod extension.
 
 ### Commands
 
 ``sm_condify <target> <condition number>`` - Applies condition to player.
 
-``sm_decondify <target> <condition number>>`` - Removes condition from player.
+``sm_decondify <target> <condition number>`` - Removes condition from player.
 
 ## Admin Caboose
 
