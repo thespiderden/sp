@@ -48,7 +48,7 @@ Either works standalone, or with Meta Chat Processor.
 
 ## Lumberjack
 
-Lumberjack is yet another Discord connection plugin. It has the ability to log connects/disconnects and chat messages to a Discord channel via a webhook. It also has support for [CallAdmin](https://github.com/Impact123/CallAdmin), acting as an optional replacement for ZipCore's CallAdmin plugin.
+Lumberjack is yet another Discord connection plugin. It has the ability to log connects/disconnects and chat messages to a Discord channel via a webhook. It also has support for [CallAdmin](https://github.com/Impact123/CallAdmin), acting as an optional replacement for ZipCore's CallAdmin plugin. Only depends on [ripext](https://github.com/ErikMinekus/sm-ripext) which has official amd64 builds.
 
 The intended way to use this plugin is to create a webhook for each individual server, filling out the avatar and nickname as you see fit on Discord's end, and using each unique webhook URL in the server's respective ``server.cfg``.
 
