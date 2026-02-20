@@ -16,7 +16,7 @@ public Plugin myinfo = {
 ConVar kickTolerance
 
 public void OnPluginStart() {
-	kickTolerance = CreateConVar("sm_idlln_kicktolerance", "5", "Number of seconds after being placed in game to check if a player still has no ID to kick. -1 = skip.")
+	kickTolerance = CreateConVar("sm_idlln_kicktolerance", "10", "Number of seconds after being placed in game to check if a player still has no ID to kick. -1 = skip.")
 
 	RegAdminCmd("sm_kickidless", cmdKickIDless, Admin_Kick)
 	RegServerCmd("sm_kickidless", srvCmdKickIDless)
