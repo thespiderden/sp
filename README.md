@@ -46,6 +46,13 @@ Either works standalone, or with Meta Chat Processor.
 
 ``sm_zensitive_reset <Steam ID in quotes>`` - "Factory resets" a user to default values. Undoes the effects of *``sm_zensitive_never``* (so can also act like an unban.)
 
+## IDlesslessness
+
+Makes players without Steam IDs unable to chat or spray. Includes a command to kick all IDless players. Optionally can kick them after a period of time after being put in game if they don't still have one.
+
+``sm_idlln_kicktolerance <time in seconds>`` - How many seconds after a player joins should their Steam ID be checked and kicked if they don't have one? Lower value means more false positives, higher 
+value means bad actors can stay in the server longer. Negative values means this feature is disabled.
+
 ## Lumberjack
 
 Lumberjack is yet another Discord connection plugin. It has the ability to log connects/disconnects and chat messages to a Discord channel via a webhook. It also has support for [CallAdmin](https://github.com/Impact123/CallAdmin), acting as an optional replacement for ZipCore's CallAdmin plugin. Only depends on [ripext](https://github.com/ErikMinekus/sm-ripext) which has official amd64 builds.
