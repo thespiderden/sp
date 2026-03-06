@@ -16,6 +16,7 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
 
 #include <ripext>
+#include <sdktools>
 
 #if !defined(VERSION)
 	#define VERSION "unknown"
@@ -33,16 +34,21 @@ ConVar webhookURL
 ConVar callWebhookURL
 ConVar callWebhookEmoji
 ConVar timeout
+ConVar logDecals
+
+bool sprayLogged[MAXPLAYERS]
 
 public void OnPluginStart() {
 	webhookURL = CreateConVar("sm_lumberjack_webhook", "", "Webhook URL chat, and connections is logged to.", FCVAR_PROTECTED)
 	callWebhookURL = CreateConVar("sm_lumberjack_calladmin_webhook", "", "Webhook URL CallAdmin calls are logged to.", FCVAR_PROTECTED)
 	callWebhookEmoji = CreateConVar("sm_lumberjack_calladmin_webhook_emoji", ":point_right:", "Point emoji used for CallAdmin webhooks.", FCVAR_PROTECTED)
 	timeout = CreateConVar("sm_lumberjack_timeout", "15", "Timeout for webhook requests.", FCVAR_PROTECTED)
+	logDecals = CreateConVar("sm_lumberjack_logdecals", "1", "Log the name of a spray when initially used by a player.")
 
 	RegAdminCmd("sm_lumberjack_calladmin_test", cmdCallAdminTest, Admin_Root)
 
 	HookEvent("player_disconnect", eventPlayerDisconnect, EventHookMode_Pre)
+	AddTempEntHook("Player Decal", onPlayerDecal)
 
 	CreateTimer(1.0, hookQueueCleanupTimer, _, TIMER_REPEAT)
 }
@@ -208,6 +214,32 @@ void eventPlayerDisconnect(Event event, const char[] name, bool dontBroadcast) {
 	hookQueueAdd(messagebuf)
 }
 
+public void OnClientDisconnect(int client) {
+	sprayLogged[client] = false
+}
+
+Action onPlayerDecal(const char[] name, const int[] clients, int count, float delay) {
+	int client = TE_ReadNum("m_nPlayer")
+	char spraybuf[64]
+	if (sprayLogged[client] || !GetConVarBool(logDecals) || !GetPlayerDecalFile(client, spraybuf, sizeof(spraybuf))) {
+		return Plugin_Continue
+	}
+
+	char namebuf[MAX_NAME_LENGTH]
+	GetClientName(client, namebuf, sizeof(namebuf))
+
+	char idbuf[MAX_AUTHID_LENGTH]
+	GetClientAuthString(client, idbuf, sizeof(idbuf))
+
+	char messagebuf[256]
+	Format(messagebuf, sizeof(messagebuf), "Spray: **%s** (``%s``) -> <Spray: ``%s``>\n", namebuf, idbuf, spraybuf)
+
+	hookQueueAdd(messagebuf)
+
+	sprayLogged[client] = true
+
+	return Plugin_Continue
+}
 
 // We only use a couple of constants from the CallAdmin headers.
 // A little copying is better than a little dependency.
