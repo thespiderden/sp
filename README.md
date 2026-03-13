@@ -69,7 +69,7 @@ The intended way to use this plugin is to create a webhook for each individual s
 
 ``sm_lumberjack_timeout <number in seconds>`` - Timeout for HTTP requests, in case they get stuck. Defaults to ``15``.
 
-``sm_lumberjack_logdecals <0/1>`` - Toggles spray logging. When enabled, the first occurance of a spray for a given map/connection will log the file. Useful for determining sprays manually from the server without the use of plugins. Defaults to on.
+``sm_lumberjack_logdecals <0/1>`` - Toggles spray logging. When enabled, the first occurance of a spray for a given map/connection will log the spray hex/file. Useful for determining sprays manually from the server without the use of plugins. Defaults to on.
 
 ``sm_lumberjack_calladmin_test`` - Sends a dummy CallAdmin webhook for troubleshooting purposes.
 
