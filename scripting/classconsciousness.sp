@@ -291,8 +291,8 @@ void onInventoryUpdate(Event event, char[] name, bool dontBroadcast) {
 	TF2_RemoveAllWeapons(client)
 
 	int umbrella = CreateEntityByName("tf2c_weapon_umbrella")
-    SetEntPropEnt(umbrella, Prop_Send, "m_hOwnerEntity", client);
-    SetEntPropEnt(umbrella, Prop_Send, "m_hOwner", client);
+	SetEntPropEnt(umbrella, Prop_Send, "m_hOwnerEntity", client);
+	SetEntPropEnt(umbrella, Prop_Send, "m_hOwner", client);
 	SetEntProp(umbrella, Prop_Send, "m_iItemDefinitionIndex", 2000)
 	SetEntProp(umbrella, Prop_Send, "m_bInitialized", true)
 	SetEntProp(umbrella, Prop_Send, "m_bValidatedAttachedEntity", true)
