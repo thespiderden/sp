@@ -72,8 +72,7 @@ public OnPluginStart() {
 	HookEvent("vip_assigned", onVIPAssigned)
 	HookEvent("post_inventory_application", onInventoryUpdate)
 
-	/*
-	GameData gameConf = LoadGameConfigFile("sdktools/custom/game.tf2classic")
+	GameData gameConf = LoadGameConfigFile("sdktools.games/game.tf2classified")
 	if (gameConf == INVALID_HANDLE) {
 		SetFailState("[CC] Failed to load TF2C gamedata file! Do you have TF2C Tools installed?")
 		return
@@ -89,7 +88,6 @@ public OnPluginStart() {
 	PrepSDKCall_AddParameter(SDKType_CBaseEntity, SDKPass_Pointer)
 
 	sdkEquipCall = EndPrepSDKCall()
-	*/
 
 	if (!currentlyVip()) {
 		if (Enabled.BoolValue) {
@@ -290,15 +288,18 @@ void onInventoryUpdate(Event event, char[] name, bool dontBroadcast) {
 		return
 	}
 
-/*
 	TF2_RemoveAllWeapons(client)
 
-	int umbrella = CreateEntityByName("tf_weapon_umbrella")
+	int umbrella = CreateEntityByName("tf2c_weapon_umbrella")
+    SetEntPropEnt(umbrella, Prop_Send, "m_hOwnerEntity", client);
+    SetEntPropEnt(umbrella, Prop_Send, "m_hOwner", client);
+	SetEntProp(umbrella, Prop_Send, "m_iItemDefinitionIndex", 2000)
+	SetEntProp(umbrella, Prop_Send, "m_bInitialized", true)
+	SetEntProp(umbrella, Prop_Send, "m_bValidatedAttachedEntity", true)
 	DispatchSpawn(umbrella)
 	SDKCall(sdkEquipCall, client, umbrella)
 
 	SetEntPropEnt(client, Prop_Send, "m_hActiveWeapon", umbrella)
-*/
 }
 
 void rollClasses(force=false) {
