@@ -87,11 +87,11 @@ Do various stuff to players. Depends on a patched TF2C Sourcemod extension.
 
 ``sm_reclassify <target> <class>`` - Change player's class and change/restock weapons
 
-``sm_regenify <target>`` - Regenerates a player, behaves as if they touched a resupply cabinet.
+``sm_regenify <target>`` - Regenerates a player, behaves as if they touched a resupply cabinet
 
 ``sm_respawnify <target>`` - Immediately respawns player
 
-``sm_teamify <target> <team>`` - Changes player's team, killing them in the process.
+``sm_teamify <target> <team>`` - Changes player's team, killing them in the process
 
 ## Admin Caboose
 
@@ -105,9 +105,14 @@ Random utilities for admins.
 
 ``sm_sprayid <target>`` - Gets the spray hex/ID/filename from a player
 
-# Rat Poison
+## Rat Poison
 
 Specify which players are allowed to spray. Whitelisted players are specified in the ``sourcemod/configs/ratpoison.whitelist.cfg`` file. One Steam ID per line.
 
 ``sm_ratpoison_enable <0/1>`` - Whether the plugin enforces the whitelist or not.
+
 ``sm_ratpoison_reload`` - Reloads the configuration file.
+
+## Drug Test
+
+Adds ``@green`` and ``@yellow`` target strings for commands. Simply load the plugin to enable.
