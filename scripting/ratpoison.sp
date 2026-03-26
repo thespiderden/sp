@@ -80,7 +80,7 @@ void readList() {
 
 void applyToConnected() {
 	int i
-	for (i = 1; i < MaxClients; i++) {
+	for (i = 1; i <= MaxClients; i++) {
 		sprayStatus[i] = false
 		char id[MAX_AUTHID_LENGTH]
 		if (!IsClientConnected(i) || !IsClientAuthorized(i) || IsFakeClient(i) || !GetClientAuthId(i, AuthId_Steam2, id, sizeof(id))) {
