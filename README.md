@@ -73,15 +73,25 @@ The intended way to use this plugin is to create a webhook for each individual s
 
 ``sm_lumberjack_calladmin_test`` - Sends a dummy CallAdmin webhook for troubleshooting purposes.
 
-## Condify
+## Stuffify
 
-Apply/remove conditions from other players. Depends on a patched TF2C Sourcemod extension.
+Do various stuff to players. Depends on a patched TF2C Sourcemod extension.
 
 ### Commands
 
 ``sm_condify <target> <condition number>`` - Applies condition to player.
 
 ``sm_decondify <target> <condition number>`` - Removes condition from player.
+
+``sm_classify <target> <class>`` - Change player's class in-place without changing weapons
+
+``sm_reclassify <target> <class>`` - Change player's class and change/restock weapons
+
+``sm_regenify <target>`` - Regenerates a player, behaves as if they touched a resupply cabinet.
+
+``sm_respawnify <target>`` - Immediately respawns player
+
+``sm_teamify <target> <team>`` - Changes player's team, killing them in the process.
 
 ## Admin Caboose
 
