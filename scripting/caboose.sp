@@ -33,6 +33,7 @@ public Plugin myinfo = {
 public OnPluginStart() {
 	RegAdminCmd("sm_uid", cmdUID, ADMFLAG_KICK, "Gets the Steam ID of one or more players in a standard format.")
 	RegAdminCmd("sm_steamhistory", cmdHistory, ADMFLAG_KICK, "Gets the steamhistory.net URL of one or more players.")
+	RegAdminCmd("sm_sprayid", cmdSprayHex, ADMFLAG_KICK, "Gets the hex of a spray.")
 }
 
 Action cmdHistory(int client, int args) {
@@ -81,6 +82,37 @@ Action _cmdID(int client, int args, steamHistory=false) {
 	}
 
 	PrintToChat(client, buf)
+
+	return Plugin_Handled
+}
+
+Action cmdSprayHex(int client, int args) {
+	char targetBuf[MAX_TARGET_LENGTH]
+	GetCmdArg(1, targetBuf, sizeof(targetBuf))
+
+	int targets[MAXPLAYERS]
+	char target[MAX_TARGET_LENGTH]
+	bool tnIsMl
+	int found = ProcessTargetString(targetBuf, client, targets, sizeof(targets), COMMAND_FILTER_NO_BOTS, target, sizeof(target), tnIsMl)
+	if (found == 0) {
+		PrintToChat(client, "[Caboose] Couldn't find target.")
+		return Plugin_Handled
+	}
+
+	int i
+	for (i = 0; i < found; i++) {
+		int target = targets[i]
+
+		char name[MAX_NAME_LENGTH]
+		GetClientName(target, name, sizeof(name))
+
+		char hex[32]
+		GetPlayerDecalFile(target, hex, sizeof(hex))
+
+		char buf[64]
+		Format(buf, sizeof(buf), "%s -> %s", name, hex)
+		PrintToChat(client, buf)
+	}
 
 	return Plugin_Handled
 }
