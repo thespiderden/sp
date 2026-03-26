@@ -49,7 +49,7 @@ public void OnPluginStart() {
 	RegConsoleCmd("say_team", cmdSayTeam)
 	RegConsoleCmd("sm_sensitive", cmdSensitive, "Shows a dialog to enable/disable viewing/sending sensitive messages")
 	RegConsoleCmd("sm_hidehidden", cmdHideHidden, "Hide hidden sensitive chat messages")
-	RegConsoleCmd("sm_iam18orolderandwishtoseesensitivechatmessages", cmdConsent, "Consent to sensitive messages after running sm_sensitive")
+	RegConsoleCmd("sm_ifimnot18iwillbebanned", cmdConsent, "Consent to sensitive messages after running sm_sensitive")
 
 	RegAdminCmd("sm_zensitive_never", cmdNeverConsent, ADMFLAG_BAN, "Makes it so a user cannot ever agree to seeing sensitive messages, and revokes if enabled. Steam ID in quotes.")
 	RegAdminCmd("sm_zensitive_reset", cmdResetConsent, ADMFLAG_UNBAN, "Resets agree values to default for a given Steam ID. Steam ID in quotes.")
@@ -266,7 +266,7 @@ Action cmdSensitive(int client, int args) {
 				"and are only visible to other users who have opted in.",
 				"[!] Opting in and/or using sensitive chat below the age",
 				"[!] of eighteen will result in a PERMANENT BAN.",
-				"To opt in, type !iam18orolderandwishtoseesensitivechatmessages in chat.",
+				"To opt in, type !ifimnot18iwillbebanned in chat.",
 				"You may opt out at any time by typing !sensitive again."
 			)
 
