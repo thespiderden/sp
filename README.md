@@ -92,3 +92,10 @@ Random utilities for admins.
 ``sm_uid <target>`` - Get Steam ID from target
 
 ``sm_steamhistory <target>`` - Gets the steamhistory.net URL of one or more players.
+
+# Rat Poison
+
+Specify which players are allowed to spray. Whitelisted players are specified in the ``sourcemod/configs/ratpoison.whitelist.cfg`` file. One Steam ID per line.
+
+``sm_ratpoison_enable <0/1>`` - Whether the plugin enforces the whitelist or not.
+``sm_ratpoison_reload`` - Reloads the configuration file.
