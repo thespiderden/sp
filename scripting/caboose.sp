@@ -54,11 +54,11 @@ Action _cmdID(int client, int args, steamHistory=false) {
 
 	int found = ProcessTargetString(targetBuf, client, targets, sizeof(targets), COMMAND_FILTER_NO_BOTS, target, sizeof(target), tnIsMl)
 	if (found == 0) {
-		PrintToChat(client, "[Caboose] Couldn't find target.")
+		PrintToChat(client, "[caboose] Couldn't find target.")
 		return Plugin_Handled
 	}
 	if (found > 1) {
-		PrintToChat(client, "[Caboose] Multiple targets found.")
+		PrintToChat(client, "[caboose] Multiple targets found.")
 		return Plugin_Handled
 	}
 
@@ -95,7 +95,7 @@ Action cmdSprayHex(int client, int args) {
 	bool tnIsMl
 	int found = ProcessTargetString(targetBuf, client, targets, sizeof(targets), COMMAND_FILTER_NO_BOTS, target, sizeof(target), tnIsMl)
 	if (found == 0) {
-		PrintToChat(client, "[Caboose] Couldn't find target.")
+		PrintToChat(client, "[caboose] Couldn't find target.")
 		return Plugin_Handled
 	}
 

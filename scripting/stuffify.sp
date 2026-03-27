@@ -54,18 +54,18 @@ Action cmdRemoveCond(int client, int args) {
 
 Action cmdCond(int client, int args, remove=false) {
 	if (args != 2) {
-		PrintToChat(client, "[Stuffify] Invalid number of arguments.")
+		PrintToChat(client, "[stuffify] Invalid number of arguments.")
 		return Plugin_Handled
 	}
 
 	int cond
 	if (!GetCmdArgIntEx(2, cond)) {
-		PrintToChat(client, "[Stuffify] Condition is invalid, must be number.")
+		PrintToChat(client, "[stuffify] Condition is invalid, must be number.")
 		return Plugin_Handled
 	}
 
 	if (cond < 0 || cond > 134) {
-		PrintToChat(client, "[Stuffify] Invalid condition number. Must be between 0-134")
+		PrintToChat(client, "[stuffify] Invalid condition number. Must be between 0-134")
 		return Plugin_Handled
 	}
 
@@ -78,7 +78,7 @@ Action cmdCond(int client, int args, remove=false) {
 
 	int found = ProcessTargetString(targetBuf, client, targets, sizeof(targets), COMMAND_FILTER_ALIVE, target, sizeof(target), tnIsMl)
 	if (found == 0) {
-		PrintToChat(client, "[Stuffify] Couldn't find target.")
+		PrintToChat(client, "[stuffify] Couldn't find target.")
 		return Plugin_Handled
 	}
 
@@ -109,7 +109,7 @@ char classStr[][]  = {"", "Scout", "Sniper", "Soldier", "Demo", "Medic", "Heavy"
 
 Action cmdClass(int client, int args, regenerate=false) {
 	if (args != 2) {
-		PrintToChat(client, "[Stuffify] Invalid number of arguments.")
+		PrintToChat(client, "[stuffify] Invalid number of arguments.")
 		return Plugin_Handled
 	}
 
@@ -126,7 +126,7 @@ Action cmdClass(int client, int args, regenerate=false) {
 	}
 
 	if (class == 0) {
-		PrintToConsole(client, "[Stuffify] Invalid class name specified.")
+		PrintToConsole(client, "[stuffify] Invalid class name specified.")
 		return Plugin_Handled
 	}
 
@@ -139,7 +139,7 @@ Action cmdClass(int client, int args, regenerate=false) {
 
 	int found = ProcessTargetString(targetBuf, client, targets, sizeof(targets), COMMAND_FILTER_ALIVE, target, sizeof(target), tnIsMl)
 	if (found == 0) {
-		PrintToChat(client, "[Stuffify] Couldn't find target.")
+		PrintToChat(client, "[stuffify] Couldn't find target.")
 		return Plugin_Handled
 	}
 
@@ -167,7 +167,7 @@ Action cmdRegenify(int client, int args) {
 
 	int found = ProcessTargetString(targetBuf, client, targets, sizeof(targets), COMMAND_FILTER_ALIVE, target, sizeof(target), tnIsMl)
 	if (found == 0) {
-		PrintToChat(client, "[Stuffify] Couldn't find target.")
+		PrintToChat(client, "[stuffify] Couldn't find target.")
 		return Plugin_Handled
 	}
 
@@ -188,7 +188,7 @@ Action cmdRespawnify(int client, int args) {
 
 	int found = ProcessTargetString(targetBuf, client, targets, sizeof(targets), 0, target, sizeof(target), tnIsMl)
 	if (found == 0) {
-		PrintToChat(client, "[Stuffify] Couldn't find target.")
+		PrintToChat(client, "[stuffify] Couldn't find target.")
 		return Plugin_Handled
 	}
 
@@ -218,7 +218,7 @@ Action cmdTeamify(int client, int args) {
 	}
 
 	if (team == -1) {
-		PrintToConsole(client, "[Stuffify] Invalid class name specified.")
+		PrintToConsole(client, "[stuffify] Invalid class name specified.")
 		return Plugin_Handled
 	}
 
@@ -228,7 +228,7 @@ Action cmdTeamify(int client, int args) {
 
 	int found = ProcessTargetString(targetBuf, client, targets, sizeof(targets), 0, target, sizeof(target), tnIsMl)
 	if (found == 0) {
-		PrintToChat(client, "[Stuffify] Couldn't find target.")
+		PrintToChat(client, "[stuffify] Couldn't find target.")
 		return Plugin_Handled
 	}
 
