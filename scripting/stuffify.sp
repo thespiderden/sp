@@ -186,7 +186,7 @@ Action cmdRespawnify(int client, int args) {
 	char target[MAX_TARGET_LENGTH]
 	bool tnIsMl
 
-	int found = ProcessTargetString(targetBuf, client, targets, sizeof(targets), COMMAND_FILTER_DEAD, target, sizeof(target), tnIsMl)
+	int found = ProcessTargetString(targetBuf, client, targets, sizeof(targets), 0, target, sizeof(target), tnIsMl)
 	if (found == 0) {
 		PrintToChat(client, "[Stuffify] Couldn't find target.")
 		return Plugin_Handled
