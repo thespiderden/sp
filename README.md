@@ -93,6 +93,10 @@ Do various stuff to players. Depends on a patched TF2C Sourcemod extension.
 
 ``sm_teamify <target> <team>`` - Changes player's team, killing them in the process
 
+### ConVars
+
+``sm_stuffify_windows_workaround <0/1>`` - Uses Vscript for the ``condify``/``decondify`` commands to work around a gamedata bug on Windows dedicated servers 
+
 ## Admin Caboose
 
 Random utilities for admins.

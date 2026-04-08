@@ -39,6 +39,8 @@ public Plugin myinfo = {
 	url = "https://codeberg.org/spiderden/sp"
 }
 
+ConVar windowsVscriptWorkaround
+
 public void OnPluginStart() {
 	RegAdminCmd("sm_condify", cmdAddCond, ADMFLAG_ROOT, "Adds a condition to player.")
 	RegAdminCmd("sm_decondify", cmdRemoveCond, ADMFLAG_ROOT, "Removes a condition from a player.")
@@ -47,6 +49,8 @@ public void OnPluginStart() {
 	RegAdminCmd("sm_regenify", cmdRegenify, ADMFLAG_ROOT, "Heals/restocks player as if they touched a resupply cabinet.")
 	RegAdminCmd("sm_respawnify", cmdRespawnify, ADMFLAG_ROOT, "Respawns player if dead.")
 	RegAdminCmd("sm_teamify", cmdTeamify, ADMFLAG_ROOT, "Changes a player's team.")
+
+	windowsVscriptWorkaround = CreateConVar("sm_stuffify_windows_workaround", "0", "Use Vscript for Condify/Decondify to workaround broken gamedata on Windows.")
 }
 
 Action cmdAddCond(int client, int args) {
@@ -87,8 +91,23 @@ Action cmdCond(int client, int args, remove=false) {
 		return Plugin_Handled
 	}
 
+	char cmd[32]
+	if (windowsVscriptWorkaround.BoolValue) {
+		if (!remove) {
+			Format(cmd, sizeof(cmd), "self.AddCond(%d);", cond)
+		} else {
+			Format(cmd, sizeof(cmd), "self.RemoveCond(%d);", cond)
+		}
+	}
+
 	for (int i = 0; i < found; i++) {
 		if (targets[i] == 0) {
+			break
+		}
+
+		if (windowsVscriptWorkaround.BoolValue) {
+			SetVariantString(cmd)
+			AcceptEntityInput(targets[i], "RunScriptCode")
 			break
 		}
 
