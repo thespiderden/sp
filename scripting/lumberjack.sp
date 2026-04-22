@@ -159,7 +159,7 @@ bool isWebhookSet() {
 }
 
 public Action OnClientSayCommand(int client, const char[] command, const char[] sArgs) {
-	if (!isWebhookSet) {
+	if (!isWebhookSet()) {
 		return Plugin_Continue
 	}
 
@@ -179,7 +179,7 @@ public Action OnClientSayCommand(int client, const char[] command, const char[] 
 }
 
 public void OnClientAuthorized(int client, const char[] auth) {
-	if (!isWebhookSet || client == 0) {
+	if (!isWebhookSet() || client == 0) {
 		return
 	}
 
@@ -196,7 +196,7 @@ public void OnClientAuthorized(int client, const char[] auth) {
 }
 
 void eventPlayerDisconnect(Event event, const char[] name, bool dontBroadcast) {
-	if (!isWebhookSet) {
+	if (!isWebhookSet()) {
 		return
 	}
 
