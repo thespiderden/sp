@@ -40,8 +40,10 @@ ConVar callWebhookURL
 ConVar callWebhookEmoji
 ConVar timeout
 ConVar logDecals
+ConVar logMapChanges
 
 bool sprayLogged[MAXPLAYERS]
+char currentMap[256]
 
 public void OnPluginStart() {
 	webhookURL = CreateConVar("sm_lumberjack_webhook", "", "Webhook URL chat, and connections is logged to.", FCVAR_PROTECTED)
@@ -49,6 +51,7 @@ public void OnPluginStart() {
 	callWebhookEmoji = CreateConVar("sm_lumberjack_calladmin_webhook_emoji", ":point_right:", "Point emoji used for CallAdmin webhooks.", FCVAR_PROTECTED)
 	timeout = CreateConVar("sm_lumberjack_timeout", "15", "Timeout for webhook requests.", FCVAR_PROTECTED)
 	logDecals = CreateConVar("sm_lumberjack_logdecals", "1", "Log the name of a spray when initially used by a player.")
+	logMapChanges = CreateConVar("sm_lumberjack_logmapchanges", "1", "Logs map changes with the new map name in chat.")
 
 	RegAdminCmd("sm_lumberjack_calladmin_test", cmdCallAdminTest, Admin_Root)
 
@@ -56,6 +59,14 @@ public void OnPluginStart() {
 	AddTempEntHook("Player Decal", onPlayerDecal)
 
 	CreateTimer(1.0, hookQueueCleanupTimer, _, TIMER_REPEAT)
+
+	char mapBuf[256]
+	GetCurrentMap(mapBuf, sizeof(mapBuf))
+	if (mapBuf[0] == '\0') {
+		currentMap = "unknown"
+	} else {
+		currentMap = mapBuf
+	}
 }
 
 // For high-frequency things like chat messages/disconnects we use a queue to avoid sending a hook
@@ -221,6 +232,20 @@ void eventPlayerDisconnect(Event event, const char[] name, bool dontBroadcast) {
 
 public void OnClientDisconnect(int client) {
 	sprayLogged[client] = false
+}
+
+public void OnMapInit(const char[] mapName) {
+	if (!isWebhookSet() || !logMapChanges.BoolValue) {
+		GetCurrentMap(currentMap, sizeof(currentMap))
+		return
+	}
+
+	char messageBuf[256]
+	Format(messageBuf, sizeof(messageBuf), "Map change: ``%s`` -> ``%s``\n", currentMap, mapName)
+
+	hookQueueAdd(messageBuf)
+
+	strcopy(currentMap, sizeof(currentMap), mapName)
 }
 
 Action onPlayerDecal(const char[] name, const int[] clients, int count, float delay) {
