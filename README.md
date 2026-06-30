@@ -120,3 +120,36 @@ Specify which players are allowed to spray. Whitelisted players are specified in
 ## Drug Test
 
 Adds ``@green`` and ``@yellow`` target strings for commands. Simply load the plugin to enable.
+
+
+## Nag
+
+Lets you show custom webpages via the MOTD panel alongside a text fallback in case they have HTML MOTDs disabled.
+
+The configuration is located at sourcemod/configs/nags.cfg.
+
+```
+// Moon's Pub sample
+
+"nags"
+{
+	"nsfw"
+	{
+		"url"	"https://moonspub.github.io/nag/nsfw/"
+		"textfallback" "[MP] WARNING: We don't allow NSFW content in sprays, text chat, or voice chat. Posting NSFW content can result in a sprayban, mute, or permanent removal from our community."
+		"forcespec" "y"
+	}
+
+	"micspam"
+	{
+		"url"	"https://moonspub.github.io/nag/micspam/"
+		"textfallback" "[MP] WARNING: We don't allow micspam for most players outside of proximity voice chat as it can render global voice chat difficult to use, especially for admins who cannot mute people."
+		"forcespec" "y"
+	}
+}
+```
+
+## commands
+
+``sm_nag <target> <nag name>`` - Shows specified nag to player
+``sm_nag_reload`` - Reloads the nag configuration file
