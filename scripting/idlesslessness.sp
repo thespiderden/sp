@@ -113,8 +113,14 @@ Action onPlayerDecal(const char[] name, const int[] clients, int count, float de
 }
 
 public Action OnClientSayCommand(int client, const char[] command, const char[] sArgs) {
+	if (client == 0) {
+		return Plugin_Continue
+	}
+
 	if (!IsClientAuthorized(client)) {
 		PrintToChat(client, "[idlln] You may not chat as you are not authenticated with Steam.")
 		return Plugin_Stop
 	}
+
+	return Plugin_Continue
 }
