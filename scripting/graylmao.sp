@@ -41,5 +41,7 @@ void onPlayerSpawn(Event event, char[] name, bool dontBroadcast) {
 	if (GetClientTeam(client) == 0) {
 		SetEntProp(client, Prop_Send, "m_bForcedSkin", true);
 		SetEntProp(client, Prop_Send, "m_nForcedSkin", 8);
+	} else {
+		SetEntProp(client, Prop_Send, "m_bForcedSkin", false);
 	}
 }
