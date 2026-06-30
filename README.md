@@ -149,7 +149,8 @@ The configuration is located at sourcemod/configs/nags.cfg.
 }
 ```
 
-## commands
+## Commands
 
 ``sm_nag <target> <nag name>`` - Shows specified nag to player
+
 ``sm_nag_reload`` - Reloads the nag configuration file
