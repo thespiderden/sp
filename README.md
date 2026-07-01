@@ -71,11 +71,11 @@ The intended way to use this plugin is to create a webhook for each individual s
 
 ``sm_lumberjack_logdecals <0/1>`` - Toggles spray logging. When enabled, the first occurance of a spray for a given map/connection will log the spray hex/file. Useful for determining sprays manually from the server without the use of plugins. Defaults to on.
 
-``sm_lumberjack_logmapchanges`` - Toggles logging of map changes.
+``sm_lumberjack_logmapchanges <0/1>`` - Toggles logging of map changes.
 
-``sm_lumberjack_logrenames`` - Toggles logging of player name changes/renames.
+``sm_lumberjack_logrenames <0/1>`` - Toggles logging of player name changes/renames.
 
-``sm_lumberjack_calladmin_test`` - Sends a dummy CallAdmin webhook for troubleshooting. purposes.
+``sm_lumberjack_calladmin_test <0/1>`` - Sends a dummy CallAdmin webhook for troubleshooting. purposes.
 
 ## Stuffify
 
