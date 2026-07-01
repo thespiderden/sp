@@ -41,6 +41,7 @@ ConVar callWebhookEmoji
 ConVar timeout
 ConVar logDecals
 ConVar logMapChanges
+ConVar logRenames
 
 bool sprayLogged[MAXPLAYERS]
 char currentMap[256]
@@ -52,10 +53,13 @@ public void OnPluginStart() {
 	timeout = CreateConVar("sm_lumberjack_timeout", "15", "Timeout for webhook requests.", FCVAR_PROTECTED)
 	logDecals = CreateConVar("sm_lumberjack_logdecals", "1", "Log the name of a spray when initially used by a player.")
 	logMapChanges = CreateConVar("sm_lumberjack_logmapchanges", "1", "Logs map changes with the new map name in chat.")
+	logRenames = CreateConVar("sm_lumberjack_logrenames", "1", "Logs player renames.")
 
 	RegAdminCmd("sm_lumberjack_calladmin_test", cmdCallAdminTest, Admin_Root)
 
 	HookEvent("player_disconnect", eventPlayerDisconnect, EventHookMode_Pre)
+	HookEvent("player_changename", eventPlayerRename, EventHookMode_Post)
+
 	AddTempEntHook("Player Decal", onPlayerDecal)
 
 	CreateTimer(1.0, hookQueueCleanupTimer, _, TIMER_REPEAT)
@@ -204,6 +208,29 @@ public void OnClientAuthorized(int client, const char[] auth) {
 	Format(messagebuf, sizeof(messagebuf), "Connect: **%s** (``%s``)\n", namebuf, idbuf)
 
 	hookQueueAdd(messagebuf)
+}
+
+void eventPlayerRename(Event event, const char[] name, bool dontBroadcast) {
+	if (!isWebhookSet() || !logRenames.BoolValue) {
+		return
+	}
+
+	int userid = event.GetInt("userid")
+	int client = GetClientOfUserId(userid)
+
+	char nameBuf[MAX_NAME_LENGTH]
+	event.GetString("oldname", nameBuf, sizeof(nameBuf))
+
+	char newNameBuf[MAX_NAME_LENGTH]
+	event.GetString("newname", newNameBuf, sizeof(newNameBuf))
+
+	char idBuf[MAX_AUTHID_LENGTH]
+	GetClientAuthString(client, idBuf, sizeof(idBuf))
+
+	char messageBuf[256]
+	Format(messageBuf, sizeof(messageBuf), "Rename: **%s** (``%s``) -> **%s** (``%s``)\n", nameBuf, idBuf, newNameBuf, idBuf)
+
+	hookQueueAdd(messageBuf)
 }
 
 void eventPlayerDisconnect(Event event, const char[] name, bool dontBroadcast) {
