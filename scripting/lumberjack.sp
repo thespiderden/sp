@@ -52,7 +52,7 @@ public void OnPluginStart() {
 	callWebhookEmoji = CreateConVar("sm_lumberjack_calladmin_webhook_emoji", ":point_right:", "Point emoji used for CallAdmin webhooks.", FCVAR_PROTECTED)
 	timeout = CreateConVar("sm_lumberjack_timeout", "15", "Timeout for webhook requests.", FCVAR_PROTECTED)
 	logDecals = CreateConVar("sm_lumberjack_logdecals", "1", "Log the name of a spray when initially used by a player.")
-	logMapChanges = CreateConVar("sm_lumberjack_logmapchanges", "1", "Logs map changes with the new map name in chat.")
+	logMapChanges = CreateConVar("sm_lumberjack_logmapchanges", "1", "Logs map changes with old/new map names.")
 	logRenames = CreateConVar("sm_lumberjack_logrenames", "1", "Logs player renames.")
 
 	RegAdminCmd("sm_lumberjack_calladmin_test", cmdCallAdminTest, Admin_Root)

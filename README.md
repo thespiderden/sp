@@ -73,9 +73,9 @@ The intended way to use this plugin is to create a webhook for each individual s
 
 ``sm_lumberjack_logmapchanges`` - Toggles logging of map changes.
 
-``sm_lumberjack_logrenames`` - Toggles logging of player name changes/renames
+``sm_lumberjack_logrenames`` - Toggles logging of player name changes/renames.
 
-``sm_lumberjack_calladmin_test`` - Sends a dummy CallAdmin webhook for troubleshooting purposes.
+``sm_lumberjack_calladmin_test`` - Sends a dummy CallAdmin webhook for troubleshooting. purposes.
 
 ## Stuffify
 
