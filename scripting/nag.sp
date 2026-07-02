@@ -80,7 +80,7 @@ record getRecord(const char[] name){
 
 Action cmdNag(int client, int args) {
 	if (args != 2) {
-		PrintToConsole(client, "[nag] Invalid number of arguments.")
+		ReplyToCommand(client, "[nag] Invalid number of arguments.")
 		return Plugin_Handled
 	}
 
@@ -91,7 +91,7 @@ Action cmdNag(int client, int args) {
 	rec = getRecord(nagKey)
 
 	if (!rec.found) {
-		PrintToConsole(client, "[nag] Could not find nag.")
+		ReplyToCommand(client, "[nag] Could not find nag.")
 		return Plugin_Handled
 	}
 
@@ -104,7 +104,7 @@ Action cmdNag(int client, int args) {
 
 	int found = ProcessTargetString(targetBuf, client, targets, sizeof(targets), COMMAND_TARGET_NONE, target, sizeof(target), tnIsMl)
 	if (found == 0) {
-		PrintToChat(client, "[nag] Couldn't find target.")
+		ReplyToCommand(client, "[nag] Couldn't find target.")
 		return Plugin_Handled
 	}
 
