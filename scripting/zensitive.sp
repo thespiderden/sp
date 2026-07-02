@@ -90,24 +90,24 @@ public Action mcpEarlyBlockHook(int& sender, ArrayList recipients, mcpSenderFlag
 
 Action cmdConsent(int client, int args) {
 	if (!viewedConsent[client]) {
-		PrintToChat(client, "[zensitive] Please type !sensitive and read the message before opting in to sensitive chat.")
+		ReplyToCommand(client, "[zensitive] Please type !sensitive and read the message before opting in to sensitive chat.")
 		return Plugin_Handled
 	}
 
 	if (!AreClientCookiesCached(client)) {
-		PrintToChat(client, "[zensitive] Error: Clientprefs have not loaded, cannot set consent preference.")
+		ReplyToCommand(client, "[zensitive] Error: Clientprefs have not loaded, cannot set consent preference.")
 		return Plugin_Handled
 	}
 
 	SetClientCookie(client, prefConsentedMsg, "y")
-	PrintToChat(client, "[zensitive] You have opted-in to seeing sensitive chat messages. Type !sensitive to opt out. To send a sensitive message, add a semicolon (;) to the beginning of your message.")
+	ReplyToCommand(client, "[zensitive] You have opted-in to seeing sensitive chat messages. Type !sensitive to opt out. To send a sensitive message, add a semicolon (;) to the beginning of your message.")
 
 	return Plugin_Handled
 }
 
 Action cmdHideHidden(int client, int args) {
 	if (!AreClientCookiesCached(client)) {
-		PrintToChat(client, "[zensitive] Error: Clientprefs have not loaded, cannot change setting.")
+		ReplyToCommand(client, "[zensitive] Error: Clientprefs have not loaded, cannot change setting.")
 		return Plugin_Handled
 	}
 
@@ -116,18 +116,18 @@ Action cmdHideHidden(int client, int args) {
 
 	if (cookiebuf[0] == 'y') {
 		SetClientCookie(client, prefHideHidden, "n")
-		PrintToChat(client, "[zensitive] Re-enabled seeing hidden messages.")
+		ReplyToCommand(client, "[zensitive] Re-enabled seeing hidden messages.")
 		return Plugin_Handled
 	}
 
 	SetClientCookie(client, prefHideHidden, "y")
-	PrintToChat(client, "[zensitive] Hidden sensitive chat messages are hidden. Type !hidehidden again to see them. If sensitive chat is enabled, this won't have an effect until you disable it.")
+	ReplyToCommand(client, "[zensitive] Hidden sensitive chat messages are hidden. Type !hidehidden again to see them. If sensitive chat is enabled, this won't have an effect until you disable it.")
 	return Plugin_Handled
 }
 
 Action cmdNeverConsent(int client, int args) {
 	if (args == 0) {
-		PrintToConsole(client, "No user ID supplied.")
+		ReplyToCommand(client, "No user ID supplied.")
 	}
 
 	char id[MAX_AUTHID_LENGTH]
@@ -136,13 +136,13 @@ Action cmdNeverConsent(int client, int args) {
 	SetAuthIdCookie(id, prefConsented, "never")
 	SetAuthIdCookie(id, prefConsentedMsg, "n")
 
-	PrintToConsole(client, "[zensitive] Added ban for Steam ID.")
+	ReplyToCommand(client, "[zensitive] Added ban for Steam ID.")
 	return Plugin_Handled
 }
 
 Action cmdResetConsent(int client, int args) {
 	if (args == 0) {
-		PrintToConsole(client, "No user ID supplied.")
+		ReplyToCommand(client, "No user ID supplied.")
 	}
 
 	char id[MAX_AUTHID_LENGTH]
@@ -238,7 +238,7 @@ Action _cmdSay(int client, int args, team=false) {
 
 Action cmdSensitive(int client, int args) {
 	if (!AreClientCookiesCached(client)) {
-		PrintToChat(client, "[zensitive] Error: Clientprefs have not loaded, cannot open consent window.")
+		ReplyToCommand(client, "[zensitive] Error: Clientprefs have not loaded, cannot open consent window.")
 		return Plugin_Handled
 	}
 
@@ -246,7 +246,7 @@ Action cmdSensitive(int client, int args) {
 	GetClientCookie(client, prefConsented, cookiebuf, sizeof(cookiebuf))
 
 	if (StrEqual(cookiebuf, "never", false)) {
-		PrintToChat(client, "[zensitive] You are forbidden from using sensitive messages. Submit a ticket for more information.")
+		ReplyToCommand(client, "[zensitive] You are forbidden from using sensitive messages. Submit a ticket for more information.")
 		return Plugin_Handled
 	}
 
