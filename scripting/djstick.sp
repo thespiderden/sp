@@ -64,7 +64,7 @@ public void OnPluginStart() {
 
 Action cmdForceDJ(int client, int args) {
 	if (args != 1) {
-		ReplyToCommand(client, "[djs] Wrong number of arguments")
+		ReplyToCommand(client, "[djstick] Wrong number of arguments")
 		return Plugin_Handled
 	}
 
@@ -76,7 +76,7 @@ Action cmdForceDJ(int client, int args) {
 	bool tnIsMl
 	int found = ProcessTargetString(argBuf, client, targets, sizeof(targets), COMMAND_FILTER_NO_MULTI | COMMAND_FILTER_NO_BOTS, target, sizeof(target), tnIsMl)
 	if (found == 0) {
-		ReplyToCommand(client, "[djs] Couldn't find target.")
+		ReplyToCommand(client, "[djstick] Couldn't find target.")
 		return Plugin_Handled
 	}
 
@@ -86,7 +86,7 @@ Action cmdForceDJ(int client, int args) {
 
 Action cmdDJ(int client, int args) {
 	if (activeDJ == DJ_NONE) {
-		ReplyToCommand(client, "[djs] There is no active DJ.")
+		ReplyToCommand(client, "[djstick] There is no active DJ.")
 		return Plugin_Handled
 	}
 
@@ -94,7 +94,7 @@ Action cmdDJ(int client, int args) {
 	GetClientName(activeDJ, nameBuf, sizeof(nameBuf))
 
 	char replyBuf[192]
-	Format(replyBuf, sizeof(replyBuf), "[djs] The current DJ is %s.", nameBuf)
+	Format(replyBuf, sizeof(replyBuf), "[djstick] The current DJ is %s.", nameBuf)
 
 	ReplyToCommand(client, replyBuf)
 
@@ -108,7 +108,7 @@ Action cmdReload(int client, int args) {
 
 Action cmdAbandonDJ(int client, int args) {
 	if (client != activeDJ) {
-		ReplyToCommand(client, "[djs] You cannot abandon DJ status as you are not the DJ.")
+		ReplyToCommand(client, "[djstick] You cannot abandon DJ status as you are not the DJ.")
 		return Plugin_Handled
 	}
 
@@ -123,12 +123,12 @@ Action cmdRevokeDJ(int client, int args) {
 
 Action cmdClaimDJ(int client, int args) {
 	if (!djApprovalStatus[client]) {
-		ReplyToCommand(client, "[djs] You are not approved to claim DJ status.")
+		ReplyToCommand(client, "[djstick] You are not approved to claim DJ status.")
 		return Plugin_Handled
 	}
 
 	if (activeDJ != -1) {
-		ReplyToCommand(client, "[djs] DJ status has already been claimed.")
+		ReplyToCommand(client, "[djstick] DJ status has already been claimed.")
 		return Plugin_Handled
 	}
 
@@ -177,7 +177,7 @@ void refreshHudText() {
 public void djTimer(Handle timer) {
 	if (activeDJ != DJ_NONE && djTimeout.IntValue > 0) {
 		if ((GetTime() - lastDJVoiceTime) >= djTimeout.IntValue) {
-			PrintToChat(activeDJ, "[djs] You are no longer the active DJ due to voice inactivity.")
+			PrintToChat(activeDJ, "[djstick] You are no longer the active DJ due to voice inactivity.")
 			abandonDJ()
 			return
 		}
@@ -192,14 +192,14 @@ void changeDJ(int client) {
 
 	char nameBuf[MAX_NAME_LENGTH]
 	GetClientName(activeDJ, nameBuf, sizeof(nameBuf))
-	PrintToChatAll("[djs] %s is now the DJ.", nameBuf)
+	PrintToChatAll("[djstick] %s is now the DJ.", nameBuf)
 	refreshHudText()
 }
 
 void abandonDJ() {
 	char nameBuf[MAX_NAME_LENGTH]
 	GetClientName(activeDJ, nameBuf, sizeof(nameBuf))
-	PrintToChatAll("[djs] %s is no longer DJ.", nameBuf)
+	PrintToChatAll("[djstick] %s is no longer DJ.", nameBuf)
 
 	activeDJ = DJ_NONE
 	refreshHudText()
