@@ -39,6 +39,7 @@ public OnPluginStart() {
 	RegConsoleCmd("sm_uid", cmdUID, "Gets the Steam ID of one or more players in a standard format.")
 	RegConsoleCmd("sm_uid64", cmdUID64, "Gets the Steam ID of one or more players in the 64-bit/community format.")
 	RegConsoleCmd("sm_steamhistory", cmdHistory, "Gets the steamhistory.net URL of one or more players.")
+	RegConsoleCmd("sm_opensteamhistory", cmdOpenHistory, "Opens the steam history page for a given user in a MOTD panel.")
 	RegConsoleCmd("sm_sprayid", cmdSprayHex, "Gets the hex of a spray.")
 }
 
@@ -95,6 +96,39 @@ Action _cmdID(int client, int args, steamHistory=false, AuthIdType authType=Auth
 	return Plugin_Handled
 }
 
+Action cmdOpenHistory(int client, int args) {
+	char targetBuf[MAX_TARGET_LENGTH]
+	GetCmdArg(1, targetBuf, sizeof(targetBuf))
+
+	int targets[MAXPLAYERS]
+	char target[MAX_TARGET_LENGTH]
+	bool tnIsMl
+
+	int found = ProcessTargetString(targetBuf, client, targets, sizeof(targets), COMMAND_FILTER_NO_BOTS, target, sizeof(target), tnIsMl)
+	if (found == 0) {
+		PrintToChat(client, "[caboose] Couldn't find target.")
+		return Plugin_Handled
+	}
+	if (found > 1) {
+		PrintToChat(client, "[caboose] Multiple targets found.")
+		return Plugin_Handled
+	}
+
+	char authID[MAX_AUTHID_LENGTH]
+	bool ok = GetClientAuthId(targets[0], AuthId_SteamID64, authID, sizeof(authID))
+	if (!ok) {
+		PrintToChat(client, "[caboose] Could not get Steam ID of user")
+		return Plugin_Handled
+	}
+
+	char urlBuf[128]
+	Format(urlBuf, sizeof(urlBuf), "https://steamhistory.net/id/%s", authID)
+
+	ShowMOTDPanel(client, "Steam History", urlBuf, MOTDPANEL_TYPE_URL)
+
+	return Plugin_Handled
+}
+
 Action cmdSprayHex(int client, int args) {
 	char targetBuf[MAX_TARGET_LENGTH]
 	GetCmdArg(1, targetBuf, sizeof(targetBuf))
@@ -102,26 +136,13 @@ Action cmdSprayHex(int client, int args) {
 	int targets[MAXPLAYERS]
 	char target[MAX_TARGET_LENGTH]
 	bool tnIsMl
-	int found = ProcessTargetString(targetBuf, client, targets, sizeof(targets), COMMAND_FILTER_NO_BOTS, target, sizeof(target), tnIsMl)
+	int found = ProcessTargetString(targetBuf, client, targets, sizeof(targets), COMMAND_FILTER_NO_BOTS|COMMAND_FILTER_NO_MULTI, target, sizeof(target), tnIsMl)
 	if (found == 0) {
 		PrintToChat(client, "[caboose] Couldn't find target.")
 		return Plugin_Handled
 	}
 
-	int i
-	for (i = 0; i < found; i++) {
-		int target = targets[i]
 
-		char name[MAX_NAME_LENGTH]
-		GetClientName(target, name, sizeof(name))
-
-		char hex[32]
-		GetPlayerDecalFile(target, hex, sizeof(hex))
-
-		char buf[64]
-		Format(buf, sizeof(buf), "%s -> %s", name, hex)
-		PrintToChat(client, buf)
-	}
 
 	return Plugin_Handled
 }
