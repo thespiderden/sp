@@ -84,7 +84,11 @@ Action _cmdID(int client, int args, steamHistory=false, AuthIdType authType=Auth
 		authType = AuthId_SteamID64
 	}
 
-	GetClientAuthId(targets[0], authType, authid, MAX_AUTHID_LENGTH, true)
+	bool ok = GetClientAuthId(targets[0], authType, authid, MAX_AUTHID_LENGTH, true)
+	if (!ok) {
+		PrintToChat(client, "[caboose] Could not get Steam ID of user.")
+		return Plugin_Handled
+	}
 
 	char buf[256]
 	if (!steamHistory) {
@@ -119,7 +123,7 @@ Action cmdOpenHistory(int client, int args) {
 	char authID[MAX_AUTHID_LENGTH]
 	bool ok = GetClientAuthId(targets[0], AuthId_SteamID64, authID, sizeof(authID))
 	if (!ok) {
-		PrintToChat(client, "[caboose] Could not get Steam ID of user")
+		PrintToChat(client, "[caboose] Could not get Steam ID of user.")
 		return Plugin_Handled
 	}
 
