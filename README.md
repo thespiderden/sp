@@ -194,3 +194,7 @@ per line.
 #### User
 
 ``sm_dj`` - Prints the current DJ.
+
+``sm_claimdj`` - Claim DJ if whitelisted.
+
+``sm_abandondj`` - Abandon DJ status if currently the DJ.
