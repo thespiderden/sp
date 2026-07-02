@@ -37,6 +37,7 @@ public Plugin myinfo = {
 
 public OnPluginStart() {
 	RegAdminCmd("sm_uid", cmdUID, ADMFLAG_KICK, "Gets the Steam ID of one or more players in a standard format.")
+	RegAdminCmd("sm_uid64", cmdUID64, ADMFLAG_KICK, "Gets the Steam ID of one or more players in the 64-bit/community format.")
 	RegAdminCmd("sm_steamhistory", cmdHistory, ADMFLAG_KICK, "Gets the steamhistory.net URL of one or more players.")
 	RegAdminCmd("sm_sprayid", cmdSprayHex, ADMFLAG_KICK, "Gets the hex of a spray.")
 }
@@ -49,7 +50,11 @@ Action cmdUID(int client, int args) {
 	return _cmdID(client, args)
 }
 
-Action _cmdID(int client, int args, steamHistory=false) {
+Action cmdUID64(int client, int args) {
+	return _cmdID(client, args, false, AuthId_SteamID64)
+}
+
+Action _cmdID(int client, int args, steamHistory=false, AuthIdType authType=AuthId_Steam2) {
 	char targetBuf[MAX_TARGET_LENGTH]
 	GetCmdArg(1, targetBuf, sizeof(targetBuf))
 
@@ -71,13 +76,12 @@ Action _cmdID(int client, int args, steamHistory=false) {
 	GetClientName(targets[0], name, sizeof(name))
 
 	char authid[MAX_AUTHID_LENGTH]
-	AuthIdType authtype = AuthId_Steam2
 
 	if (steamHistory) {
-		authtype = AuthId_SteamID64
+		authType = AuthId_SteamID64
 	}
 
-	GetClientAuthId(targets[0], authtype, authid, MAX_AUTHID_LENGTH, true)
+	GetClientAuthId(targets[0], authType, authid, MAX_AUTHID_LENGTH, true)
 
 	char buf[256]
 	if (!steamHistory) {
