@@ -110,7 +110,7 @@ Action cmdNag(int client, int args) {
 
 	for (int i = 0; i < found; i++) {
 		int targ = targets[i]
-		if (!IsClientConnected(targ) || !IsClientInGame(targ)) {
+		if (targ == 0 || !IsClientConnected(targ) || !IsClientInGame(targ) || IsFakeClient(targ)) {
 			continue
 		}
 
