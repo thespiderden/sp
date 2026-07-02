@@ -70,8 +70,6 @@ public OnPluginStart() {
 
 	RegConsoleCmd("sm_classes", cmdClasses)
 
-	RegServerCmd("sm_cc_roll", cmdRollServer, "Rolls a new set of classes, bypassing sm_cc_rolls 0.")
-
 	HookEvent("player_spawn", onPlayerSpawn)
 	HookEvent("teamplay_round_start", onRoundStart)
 	HookEvent("vip_assigned", onVIPAssigned)
@@ -121,7 +119,7 @@ public void OnMapStart() {
 }
 
 Action cmdClasses(int client, int args) {
-	PrintToChat(client,
+	ReplyToCommand(client,
 		"[CC] RED %s vs. BLU %s vs. GRN %s vs. YLW %s",
 		classStr[classes[TFTeam_Red]],
 		classStr[classes[TFTeam_Blue]],
@@ -137,11 +135,7 @@ Action cmdRollServer(int args) {
 
 Action cmdRoll(int client, int args) {
 	if (!Enabled.BoolValue) {
-		if (client != 0) {
-			PrintToConsole(client, "[CC] Please enable the plugin if you wish to use sm_cc_roll.")
-		} else {
-			PrintToServer("[CC] Please enable the plugin if you wish to use sm_cc_roll.")
-		}
+		ReplyToCommand(client, "[CC] Please enable the plugin if you wish to use sm_cc_roll.")
 		return Plugin_Handled
 	}
 
@@ -153,11 +147,11 @@ Action cmdRoll(int client, int args) {
 
 Action cmdChangeClass(int client, int args) {
 	if (!Enabled.BoolValue) {
-		PrintToServer("[CC] Please enable the plugin if you wish to use sm_cc_change.")
+		ReplyToCommand(client, "[CC] Please enable the plugin if you wish to use sm_cc_change.")
 		return Plugin_Handled
 	}
 	if (args != 2) {
-		PrintToServer("[CC] Invalid number of arguments for change class.")
+		ReplyToCommand(client, "[CC] Invalid number of arguments for change class.")
 		return Plugin_Handled
 	}
 
@@ -176,7 +170,7 @@ Action cmdChangeClass(int client, int args) {
 	} else if (StrEqual(buf, "all", false)) {
 		target = TFTeam_Unassigned // Magic value later for "all"
 	} else {
-		PrintToServer("[CC] Invalid team name specified")
+		ReplyToCommand(client, "[CC] Invalid team name specified")
 		return Plugin_Handled
 	}
 
@@ -193,7 +187,7 @@ Action cmdChangeClass(int client, int args) {
 	}
 
 	if (class == 0) {
-		PrintToServer("[CC] Invalid class name specified.")
+		ReplyToCommand(client, "[CC] Invalid class name specified.")
 		return Plugin_Handled
 	}
 
