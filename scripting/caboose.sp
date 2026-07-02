@@ -36,10 +36,10 @@ public Plugin myinfo = {
 }
 
 public OnPluginStart() {
-	RegAdminCmd("sm_uid", cmdUID, ADMFLAG_KICK, "Gets the Steam ID of one or more players in a standard format.")
-	RegAdminCmd("sm_uid64", cmdUID64, ADMFLAG_KICK, "Gets the Steam ID of one or more players in the 64-bit/community format.")
-	RegAdminCmd("sm_steamhistory", cmdHistory, ADMFLAG_KICK, "Gets the steamhistory.net URL of one or more players.")
-	RegAdminCmd("sm_sprayid", cmdSprayHex, ADMFLAG_KICK, "Gets the hex of a spray.")
+	RegConsoleCmd("sm_uid", cmdUID, "Gets the Steam ID of one or more players in a standard format.")
+	RegConsoleCmd("sm_uid64", cmdUID64, "Gets the Steam ID of one or more players in the 64-bit/community format.")
+	RegConsoleCmd("sm_steamhistory", cmdHistory, "Gets the steamhistory.net URL of one or more players.")
+	RegConsoleCmd("sm_sprayid", cmdSprayHex, "Gets the hex of a spray.")
 }
 
 Action cmdHistory(int client, int args) {
