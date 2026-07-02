@@ -103,11 +103,15 @@ Random utilities for admins.
 
 ### Commands
 
-``sm_uid <target>`` - Get Steam ID from target
+``sm_uid <target>`` - Get Steam ID from target.
 
-``sm_steamhistory <target>`` - Gets the steamhistory.net URL of target.
+``sm_uid64 <target>`` - Get 64-bit/community Steam ID from target.
 
-``sm_sprayid <target>`` - Gets the spray hex/ID/filename from a player
+``sm_steamhistory/sm_history <target>`` - Gets the steamhistory.net URL of target.
+
+``sm_opensteamhistory/sm_openhistory <target>`` - Shows steamhistory.net URL of target in-game via a MOTD panel.
+
+``sm_sprayid <target>`` - Gets the spray hex/ID/filename from a player.
 
 ## Rat Poison
 
@@ -154,3 +158,33 @@ The configuration is located at sourcemod/configs/nags.cfg.
 ``sm_nag <target> <nag name>`` - Shows specified nag to player
 
 ``sm_nag_reload`` - Reloads the nag configuration file
+
+## DJ Stick
+
+DJ Stick implements the "Current DJ" system on Moon's Pub. It allows whitelisted DJs
+to mark themselves as the current micspammer.
+
+The whitelist is located at ``sourcemod/configs/djstick.whitelist.cfg``. One Steam ID
+per line.
+
+### ConVars
+
+``sm_djstick_timeout`` - Number of seconds of voice inactivity before removing active DJ status (default: 120.)
+
+``sm_djstick_hudcolour_r/g/b <0-255>`` - Colour to use for HUD text.
+
+``sm_djstick_hudpos_x/y <0.0-1.0/-1.0>`` - Position to use for HUD text (-1.0 is centred.)
+
+### Commands
+
+#### Admin
+
+``sm_djstick_reload`` - Reload whitelist
+
+``sm_djstick_force/sm_forcedj <target>`` - Force a certain player to be DJ, regardless of whitelist status
+
+``sm_djstick_revoke <target>`` - Forces the current DJ to abandon their active DJ status.
+
+#### User
+
+``sm_dj`` - Prints the current DJ.

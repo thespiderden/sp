@@ -56,11 +56,11 @@ ConVar hudTextB
 ConVar djTimeout
 
 public void OnPluginStart() {
-	RegAdminCmd("sm_djstick_reload", cmdReload, ADMFLAG_ROOT)
-	RegAdminCmd("sm_djstick_force", cmdForceDJ, ADMFLAG_ROOT)
-	RegAdminCmd("sm_forcedj", cmdForceDJ, ADMFLAG_KICK)
-	RegAdminCmd("sm_djstick_revoke", cmdRevokeDJ, ADMFLAG_KICK)
-	RegAdminCmd("sm_revokedj", cmdRevokeDJ, ADMFLAG_KICK)
+	RegAdminCmd("sm_djstick_reload", cmdReload, ADMFLAG_ROOT), "Reload whitelist."
+	RegAdminCmd("sm_djstick_force", cmdForceDJ, ADMFLAG_ROOT, "Force a certain player to be DJ, regardless of whitelist status.")
+	RegAdminCmd("sm_forcedj", cmdForceDJ, ADMFLAG_KICK, "Force a certain player to be DJ, regardless of whitelist status")
+	RegAdminCmd("sm_djstick_revoke", cmdRevokeDJ, ADMFLAG_KICK, "Forces the current DJ to abandon their active DJ status.")
+	RegAdminCmd("sm_revokedj", cmdRevokeDJ, ADMFLAG_KICK, "Forces the current DJ to abandon their active DJ status.")
 
 	RegConsoleCmd("sm_claimdj", cmdClaimDJ, "Claim the active DJ status if you're whitelisted.")
 	RegConsoleCmd("sm_abandondj", cmdAbandonDJ, "Remove your own active DJ status.")
