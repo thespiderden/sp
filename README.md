@@ -50,8 +50,14 @@ Either works standalone, or with Meta Chat Processor.
 
 Makes players without Steam IDs unable to chat or spray. Includes a command to kick all IDless players. Optionally can kick them after a period of time after being put in game if they don't still have one.
 
+### ConVars
+
 ``sm_idlln_kicktolerance <time in seconds>`` - How many seconds after a player joins should their Steam ID be checked and kicked if they don't have one? Lower value means more false positives, higher 
 value means bad actors can stay in the server longer. Negative values means this feature is disabled.
+
+### Commands
+
+``sm_kickidless`` - Kicks all IDless players
 
 ## Lumberjack
 
