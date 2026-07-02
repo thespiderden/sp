@@ -39,7 +39,9 @@ public OnPluginStart() {
 	RegConsoleCmd("sm_uid", cmdUID, "Gets the Steam ID of one or more players in a standard format.")
 	RegConsoleCmd("sm_uid64", cmdUID64, "Gets the Steam ID of one or more players in the 64-bit/community format.")
 	RegConsoleCmd("sm_steamhistory", cmdHistory, "Gets the steamhistory.net URL of one or more players.")
+	RegConsoleCmd("sm_history", cmdHistory, "Gets the steamhistory.net URL of one or more players.")
 	RegConsoleCmd("sm_opensteamhistory", cmdOpenHistory, "Opens the steam history page for a given user in a MOTD panel.")
+	RegConsoleCmd("sm_openhistory", cmdOpenHistory, "Opens the steam history page for a given user in a MOTD panel.")
 	RegConsoleCmd("sm_sprayid", cmdSprayHex, "Gets the hex of a spray.")
 }
 
