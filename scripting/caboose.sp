@@ -58,6 +58,11 @@ Action cmdUID64(int client, int args) {
 }
 
 Action _cmdID(int client, int args, steamHistory=false, AuthIdType authType=AuthId_Steam2) {
+	if (args != 1) {
+		ReplyToCommand(client, "[caboose] Invalid number of arguments.")
+		return Plugin_Handled
+	}
+
 	char targetBuf[MAX_TARGET_LENGTH]
 	GetCmdArg(1, targetBuf, sizeof(targetBuf))
 
@@ -103,6 +108,11 @@ Action _cmdID(int client, int args, steamHistory=false, AuthIdType authType=Auth
 }
 
 Action cmdOpenHistory(int client, int args) {
+	if (args != 1) {
+		ReplyToCommand(client, "[caboose] Invalid number of arguments.")
+		return Plugin_Handled
+	}
+
 	char targetBuf[MAX_TARGET_LENGTH]
 	GetCmdArg(1, targetBuf, sizeof(targetBuf))
 
@@ -136,6 +146,11 @@ Action cmdOpenHistory(int client, int args) {
 }
 
 Action cmdSprayHex(int client, int args) {
+	if (args != 1) {
+		ReplyToCommand(client, "[caboose] Invalid number of arguments.")
+		return Plugin_Handled
+	}
+
 	char targetBuf[MAX_TARGET_LENGTH]
 	GetCmdArg(1, targetBuf, sizeof(targetBuf))
 
