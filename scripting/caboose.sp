@@ -142,7 +142,5 @@ Action cmdSprayHex(int client, int args) {
 		return Plugin_Handled
 	}
 
-
-
 	return Plugin_Handled
 }
