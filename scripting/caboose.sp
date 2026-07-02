@@ -67,11 +67,11 @@ Action _cmdID(int client, int args, steamHistory=false, AuthIdType authType=Auth
 
 	int found = ProcessTargetString(targetBuf, client, targets, sizeof(targets), COMMAND_FILTER_NO_BOTS, target, sizeof(target), tnIsMl)
 	if (found == 0) {
-		PrintToChat(client, "[caboose] Couldn't find target.")
+		ReplyToCommand(client, "[caboose] Couldn't find target.")
 		return Plugin_Handled
 	}
 	if (found > 1) {
-		PrintToChat(client, "[caboose] Multiple targets found.")
+		ReplyToCommand(client, "[caboose] Multiple targets found.")
 		return Plugin_Handled
 	}
 
@@ -86,7 +86,7 @@ Action _cmdID(int client, int args, steamHistory=false, AuthIdType authType=Auth
 
 	bool ok = GetClientAuthId(targets[0], authType, authid, MAX_AUTHID_LENGTH, true)
 	if (!ok) {
-		PrintToChat(client, "[caboose] Could not get Steam ID of user.")
+		ReplyToCommand(client, "[caboose] Could not get Steam ID of user.")
 		return Plugin_Handled
 	}
 
@@ -97,7 +97,7 @@ Action _cmdID(int client, int args, steamHistory=false, AuthIdType authType=Auth
 		Format(buf, sizeof(buf), "%s -> https://steamhistory.net/id/%s ", name, authid)
 	}
 
-	PrintToChat(client, buf)
+	ReplyToCommand(client, buf)
 
 	return Plugin_Handled
 }
@@ -112,18 +112,18 @@ Action cmdOpenHistory(int client, int args) {
 
 	int found = ProcessTargetString(targetBuf, client, targets, sizeof(targets), COMMAND_FILTER_NO_BOTS, target, sizeof(target), tnIsMl)
 	if (found == 0) {
-		PrintToChat(client, "[caboose] Couldn't find target.")
+		ReplyToCommand(client, "[caboose] Couldn't find target.")
 		return Plugin_Handled
 	}
 	if (found > 1) {
-		PrintToChat(client, "[caboose] Multiple targets found.")
+		ReplyToCommand(client, "[caboose] Multiple targets found.")
 		return Plugin_Handled
 	}
 
 	char authID[MAX_AUTHID_LENGTH]
 	bool ok = GetClientAuthId(targets[0], AuthId_SteamID64, authID, sizeof(authID))
 	if (!ok) {
-		PrintToChat(client, "[caboose] Could not get Steam ID of user.")
+		ReplyToCommand(client, "[caboose] Could not get Steam ID of user.")
 		return Plugin_Handled
 	}
 
@@ -144,7 +144,7 @@ Action cmdSprayHex(int client, int args) {
 	bool tnIsMl
 	int found = ProcessTargetString(targetBuf, client, targets, sizeof(targets), COMMAND_FILTER_NO_BOTS|COMMAND_FILTER_NO_MULTI, target, sizeof(target), tnIsMl)
 	if (found == 0) {
-		PrintToChat(client, "[caboose] Couldn't find target.")
+		ReplyToCommand(client, "[caboose] Couldn't find target.")
 		return Plugin_Handled
 	}
 
