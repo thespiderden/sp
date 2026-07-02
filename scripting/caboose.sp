@@ -148,5 +148,20 @@ Action cmdSprayHex(int client, int args) {
 		return Plugin_Handled
 	}
 
+	int i
+	for (i = 0; i < found; i++) {
+		int target = targets[i]
+
+		char name[MAX_NAME_LENGTH]
+		GetClientName(target, name, sizeof(name))
+
+		char hex[32]
+		GetPlayerDecalFile(target, hex, sizeof(hex))
+
+		char buf[64]
+		Format(buf, sizeof(buf), "%s -> %s", name, hex)
+		ReplyToCommand(client, buf)
+	}
+
 	return Plugin_Handled
 }
