@@ -129,10 +129,6 @@ Action cmdClasses(int client, int args) {
 	return Plugin_Handled
 }
 
-Action cmdRollServer(int args) {
-	return cmdRoll(0, args)
-}
-
 Action cmdRoll(int client, int args) {
 	if (!Enabled.BoolValue) {
 		ReplyToCommand(client, "[CC] Please enable the plugin if you wish to use sm_cc_roll.")
