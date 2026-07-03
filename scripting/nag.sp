@@ -26,7 +26,7 @@ public void OnPluginStart() {
 		SetFailState("Could not parse configuration file.")
 	}
 
-	RegServerCmd("sm_nag_reload", cmdReload)
+	RegAdminCmd("sm_nag_reload", cmdReload, ADMFLAG_ROOT)
 	RegAdminCmd("sm_nag", cmdNag, ADMFLAG_KICK)
 }
 
@@ -36,9 +36,9 @@ bool reloadConfig() {
 	return conf.ImportFromFile(path)
 }
 
-Action cmdReload(int args) {
+Action cmdReload(int client, int args) {
 	if (!reloadConfig()) {
-		PrintToServer("[nag] failed to reload config file!")
+		ReplyToCommand(client, "[nag] failed to reload config file!")
 	}
 
 	return Plugin_Handled
