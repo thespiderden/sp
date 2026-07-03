@@ -189,7 +189,7 @@ per line.
 
 ``sm_djstick_force/sm_forcedj <target>`` - Force a certain player to be DJ, regardless of whitelist status
 
-``sm_djstick_revoke <target>`` - Forces the current DJ to abandon their active DJ status.
+``sm_djstick_revoke/sm_revokedj <target>`` - Forces the current DJ to abandon their active DJ status.
 
 #### User
 
