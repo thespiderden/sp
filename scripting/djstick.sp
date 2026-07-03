@@ -81,7 +81,7 @@ public void OnPluginStart() {
 
 	CreateTimer(3.0, djTimer, 0, TIMER_REPEAT)
 
-	readList()
+	cmdReload(0, 0)
 }
 
 Action cmdForceDJ(int client, int args) {
@@ -124,7 +124,41 @@ Action cmdDJ(int client, int args) {
 }
 
 Action cmdReload(int client, int args) {
-	readList()
+	approvedDJs.Clear()
+
+	char path[PLATFORM_MAX_PATH]
+	BuildPath(Path_SM, path, sizeof(path), "configs/djstick.whitelist.cfg")
+
+	if (!FileExists(path)) {
+		ReplyToCommand(client, "[djstick] warning: No configuration file, will treat whitelist as empty.")
+		return Plugin_Handled
+	}
+
+	Handle file = OpenFile(path, "r")
+	if (file == null) {
+		ReplyToCommand(client, "[djstick] error: There was a problem opening the configuration file.")
+		return Plugin_Handled
+	}
+
+	char line[MAX_AUTHID_LENGTH]
+	while (!IsEndOfFile(file) && ReadFileLine(file, line, sizeof(line))) {
+		TrimString(line)
+		approvedDJs.PushString(line)
+	}
+
+	int i
+	for (i = 1; i <= MaxClients; i++) {
+		djApprovalStatus[i] = false
+		char id[MAX_AUTHID_LENGTH]
+		if (!IsClientConnected(i) || !IsClientAuthorized(i) || IsFakeClient(i) || !GetClientAuthId(i, AuthId_Steam2, id, sizeof(id))) {
+			continue
+		}
+
+		if (approvedDJs.FindString(id) != -1) {
+			djApprovalStatus[i] = true
+		}
+	}
+
 	return Plugin_Handled
 }
 
@@ -245,45 +279,4 @@ public void OnClientSpeaking(int client) {
 	}
 
 	lastDJVoiceTime = GetTime()
-}
-
-void readList() {
-	approvedDJs.Clear()
-
-	char path[PLATFORM_MAX_PATH]
-	BuildPath(Path_SM, path, sizeof(path), "configs/djstick.whitelist.cfg")
-
-	if (!FileExists(path)) {
-		PrintToServer("[djstick] warning: No configuration file, will treat whitelist as empty.")
-		return
-	}
-
-	Handle file = OpenFile(path, "r")
-	if (file == null) {
-		PrintToServer("[djstick] error: There was a problem opening the configuration file.")
-		return
-	}
-
-	char line[MAX_AUTHID_LENGTH]
-	while (!IsEndOfFile(file) && ReadFileLine(file, line, sizeof(line))) {
-		TrimString(line)
-		approvedDJs.PushString(line)
-	}
-
-	applyToConnected()
-}
-
-void applyToConnected() {
-	int i
-	for (i = 1; i <= MaxClients; i++) {
-		djApprovalStatus[i] = false
-		char id[MAX_AUTHID_LENGTH]
-		if (!IsClientConnected(i) || !IsClientAuthorized(i) || IsFakeClient(i) || !GetClientAuthId(i, AuthId_Steam2, id, sizeof(id))) {
-			continue
-		}
-
-		if (approvedDJs.FindString(id) != -1) {
-			djApprovalStatus[i] = true
-		}
-	}
 }
