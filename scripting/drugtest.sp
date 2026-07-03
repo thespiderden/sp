@@ -23,6 +23,10 @@ all derivative works.
 #include <commandfilters>
 #include <tf2>
 
+#if !defined(VERSION)
+	#define VERSION "unknown"
+#endif
+
 public Plugin myinfo = {
 	name = "Drug Test",
 	author = "webb <w@spiderden.org>",
