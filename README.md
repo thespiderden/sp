@@ -73,15 +73,21 @@ The intended way to use this plugin is to create a webhook for each individual s
 
 ``sm_lumberjack_calladmin_webhook_emoji <symbol>`` - Custom symbol to use in place of the ``👉`` in the CallAdmin message. To use a custom emoji, set value to the output in Discord of the custom emoji name prefixed with a backslash (should be something like ``<:foo:69420694206942069420>``.) 
 
+``sm_lumberjack_calladmin_test <0/1>`` - Sends a dummy CallAdmin webhook for troubleshooting purposes.
+
 ``sm_lumberjack_timeout <number in seconds>`` - Timeout for HTTP requests, in case they get stuck. Defaults to ``15``.
 
-``sm_lumberjack_logdecals <0/1>`` - Toggles spray logging. When enabled, the first occurance of a spray for a given map/connection will log the spray hex/file. Useful for determining sprays manually from the server without the use of plugins. Defaults to on.
+``sm_lumberjack_log_chat <0/1>``- Toggles logging of chat messages.
 
-``sm_lumberjack_logmapchanges <0/1>`` - Toggles logging of map changes.
+``sm_lumberjack_log_connections <0/1>`` - Toggles logging of player connections.
 
-``sm_lumberjack_logrenames <0/1>`` - Toggles logging of player name changes/renames.
+``sm_lumberjack_log_disconnections <0/1>`` - Toggles logging of player disconnections.
 
-``sm_lumberjack_calladmin_test <0/1>`` - Sends a dummy CallAdmin webhook for troubleshooting. purposes.
+``sm_lumberjack_log_decals <0/1>`` - Toggles spray logging. When enabled, the first occurance of a spray for a given map/connection will log the spray hex/file. Useful for determining sprays manually from the server without the use of other plugins.
+
+``sm_lumberjack_log_mapchanges <0/1>`` - Toggles logging of map changes.
+
+``sm_lumberjack_log_renames <0/1>`` - Toggles logging of player name changes/renames.
 
 ## Stuffify
 

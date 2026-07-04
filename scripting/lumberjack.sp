@@ -39,10 +39,14 @@ ConVar webhookURL
 ConVar callWebhookURL
 ConVar callWebhookEmoji
 ConVar timeout
+ConVar useId64
+
+ConVar logChat
+ConVar logConnections
+ConVar logDisconnections
 ConVar logDecals
 ConVar logMapChanges
 ConVar logRenames
-ConVar useId64
 
 bool sprayLogged[MAXPLAYERS]
 char currentMap[256]
@@ -52,10 +56,14 @@ public void OnPluginStart() {
 	callWebhookURL = CreateConVar("sm_lumberjack_calladmin_webhook", "", "Webhook URL CallAdmin calls are logged to.", FCVAR_PROTECTED)
 	callWebhookEmoji = CreateConVar("sm_lumberjack_calladmin_webhook_emoji", ":point_right:", "Point emoji used for CallAdmin webhooks.", FCVAR_PROTECTED)
 	timeout = CreateConVar("sm_lumberjack_timeout", "15", "Timeout for webhook requests.", FCVAR_PROTECTED)
-	logDecals = CreateConVar("sm_lumberjack_logdecals", "1", "Log the name of a spray when initially used by a player.")
-	logMapChanges = CreateConVar("sm_lumberjack_logmapchanges", "1", "Logs map changes with old/new map names.")
-	logRenames = CreateConVar("sm_lumberjack_logrenames", "1", "Logs player renames.")
 	useId64 = CreateConVar("sm_lumberjack_id64", "0", "Use 64-bit/community format for Steam IDs.")
+
+	logChat = CreateConVar("sm_lumberjack_log_chat", "1", "Log chat messages.")
+	logConnections = CreateConVar("sm_lumberjack_log_connections", "1", "Log player connections.")
+	logDisconnections = CreateConVar("sm_lumberjack_log_disconnections", "1", "Log player diconnections.")
+	logDecals = CreateConVar("sm_lumberjack_log_decals", "1", "Log the name of a spray when initially used by a player.")
+	logMapChanges = CreateConVar("sm_lumberjack_log_mapchanges", "1", "Logs map changes with old/new map names.")
+	logRenames = CreateConVar("sm_lumberjack_log_renames", "1", "Logs player renames.")
 
 	RegAdminCmd("sm_lumberjack_calladmin_test", cmdCallAdminTest, Admin_Root)
 
@@ -185,7 +193,7 @@ void getSteamID(int client, char[] buf, int size) {
 }
 
 public Action OnClientSayCommand(int client, const char[] command, const char[] sArgs) {
-	if (!isWebhookSet()) {
+	if (!logChat.BoolValue || !isWebhookSet()) {
 		return Plugin_Continue
 	}
 
@@ -205,7 +213,7 @@ public Action OnClientSayCommand(int client, const char[] command, const char[] 
 }
 
 public void OnClientAuthorized(int client, const char[] auth) {
-	if (!isWebhookSet() || client == 0) {
+	if (!logConnections.BoolValue || !isWebhookSet() || client == 0) {
 		return
 	}
 
@@ -222,7 +230,7 @@ public void OnClientAuthorized(int client, const char[] auth) {
 }
 
 void eventPlayerRename(Event event, const char[] name, bool dontBroadcast) {
-	if (!isWebhookSet() || !logRenames.BoolValue) {
+	if (!logRenames.BoolValue || !isWebhookSet()) {
 		return
 	}
 
@@ -245,7 +253,7 @@ void eventPlayerRename(Event event, const char[] name, bool dontBroadcast) {
 }
 
 void eventPlayerDisconnect(Event event, const char[] name, bool dontBroadcast) {
-	if (!isWebhookSet()) {
+	if (!logDisconnections.BoolValue || !isWebhookSet()) {
 		return
 	}
 
@@ -273,7 +281,7 @@ public void OnClientDisconnect(int client) {
 }
 
 public void OnMapInit(const char[] mapName) {
-	if (!isWebhookSet() || !logMapChanges.BoolValue) {
+	if (!logMapChanges.BoolValue || !isWebhookSet())  {
 		GetCurrentMap(currentMap, sizeof(currentMap))
 		return
 	}
@@ -287,6 +295,10 @@ public void OnMapInit(const char[] mapName) {
 }
 
 Action onPlayerDecal(const char[] name, const int[] clients, int count, float delay) {
+	if (!logDecals.BoolValue || !isWebhookSet()) {
+		return Plugin_Continue
+	}
+
 	int client = TE_ReadNum("m_nPlayer")
 	char spraybuf[64]
 	if (sprayLogged[client] || !GetConVarBool(logDecals) || !GetPlayerDecalFile(client, spraybuf, sizeof(spraybuf))) {
