@@ -36,8 +36,11 @@ public Plugin myinfo = {
 }
 
 ConVar webhookURL
+
 ConVar callWebhookURL
 ConVar callWebhookEmoji
+ConVar callWebhookPing
+
 ConVar timeout
 ConVar useId64
 
@@ -53,8 +56,11 @@ char currentMap[256]
 
 public void OnPluginStart() {
 	webhookURL = CreateConVar("sm_lumberjack_webhook", "", "Webhook URL chat, and connections is logged to.", FCVAR_PROTECTED)
+
 	callWebhookURL = CreateConVar("sm_lumberjack_calladmin_webhook", "", "Webhook URL CallAdmin calls are logged to.", FCVAR_PROTECTED)
 	callWebhookEmoji = CreateConVar("sm_lumberjack_calladmin_webhook_emoji", ":point_right:", "Point emoji used for CallAdmin webhooks.", FCVAR_PROTECTED)
+	callWebhookPing = CreateConVar("sm_lumberjack_calladmin_webhook_ping", "@everyone", "Ping used for CallAdmin webhooks. Anything besides @everyone and @here requires special formatting to ping properly.")
+
 	timeout = CreateConVar("sm_lumberjack_timeout", "15", "Timeout for webhook requests.", FCVAR_PROTECTED)
 	useId64 = CreateConVar("sm_lumberjack_id64", "0", "Use 64-bit/community format for Steam IDs.")
 
@@ -357,15 +363,19 @@ public void CallAdmin_OnReportPost(int client, int target, const char[] reason) 
 	char pointSymbol[64]
 	callWebhookEmoji.GetString(pointSymbol, sizeof(pointSymbol))
 
-	char messageBuf[512]
+	char ping[32]
+	callWebhookPing.GetString(ping, sizeof(ping))
 
-	Format(messageBuf, sizeof(messageBuf), "# Admin requested\n## %s (``%s``) %s %s (``%s``)\n``%s``\n\n@everyone",
+	char messageBuf[1000]
+
+	Format(messageBuf, sizeof(messageBuf), "# Admin requested\n## %s (``%s``) %s %s (``%s``)\n``%s``\n\n%s",
 		reporter,
 		reporterID,
 		pointSymbol,
 		reportee,
 		reporteeID,
-		reason
+		reason,
+		ping
 	)
 
 	sendWebhook(messageBuf, callWebhookURL, true)
