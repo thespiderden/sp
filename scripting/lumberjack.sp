@@ -42,6 +42,7 @@ ConVar timeout
 ConVar logDecals
 ConVar logMapChanges
 ConVar logRenames
+ConVar useId64
 
 bool sprayLogged[MAXPLAYERS]
 char currentMap[256]
@@ -54,6 +55,7 @@ public void OnPluginStart() {
 	logDecals = CreateConVar("sm_lumberjack_logdecals", "1", "Log the name of a spray when initially used by a player.")
 	logMapChanges = CreateConVar("sm_lumberjack_logmapchanges", "1", "Logs map changes with old/new map names.")
 	logRenames = CreateConVar("sm_lumberjack_logrenames", "1", "Logs player renames.")
+	useId64 = CreateConVar("sm_lumberjack_id64", "0", "Use 64-bit/community format for Steam IDs.")
 
 	RegAdminCmd("sm_lumberjack_calladmin_test", cmdCallAdminTest, Admin_Root)
 
@@ -173,6 +175,15 @@ bool isWebhookSet() {
 	return true
 }
 
+void getSteamID(int client, char[] buf, int size) {
+	AuthIdType fmt = AuthId_Steam2
+	if (useId64.BoolValue) {
+		fmt = AuthId_SteamID64
+	}
+
+	GetClientAuthId(client, fmt, buf, size)
+}
+
 public Action OnClientSayCommand(int client, const char[] command, const char[] sArgs) {
 	if (!isWebhookSet()) {
 		return Plugin_Continue
@@ -182,7 +193,7 @@ public Action OnClientSayCommand(int client, const char[] command, const char[] 
 	char namebuf[MAX_NAME_LENGTH] = "Server"
 
 	if (client != 0) {
-		GetClientAuthString(client, idbuf, sizeof(idbuf))
+		getSteamID(client, idbuf, sizeof(idbuf))
 		GetClientName(client, namebuf, sizeof(namebuf))
 	}
 
@@ -199,7 +210,7 @@ public void OnClientAuthorized(int client, const char[] auth) {
 	}
 
 	char idbuf[MAX_AUTHID_LENGTH]
-	GetClientAuthString(client, idbuf, sizeof(idbuf))
+	getSteamID(client, idbuf, sizeof(idbuf))
 
 	char namebuf[MAX_NAME_LENGTH]
 	GetClientName(client, namebuf, sizeof(namebuf))
@@ -225,7 +236,7 @@ void eventPlayerRename(Event event, const char[] name, bool dontBroadcast) {
 	event.GetString("newname", newNameBuf, sizeof(newNameBuf))
 
 	char idBuf[MAX_AUTHID_LENGTH]
-	GetClientAuthString(client, idBuf, sizeof(idBuf))
+	getSteamID(client, idBuf, sizeof(idBuf))
 
 	char messageBuf[256]
 	Format(messageBuf, sizeof(messageBuf), "Rename: **%s** (``%s``) -> **%s** (``%s``)\n", nameBuf, idBuf, newNameBuf, idBuf)
@@ -246,7 +257,7 @@ void eventPlayerDisconnect(Event event, const char[] name, bool dontBroadcast) {
 	}
 
 	char idbuf[MAX_AUTHID_LENGTH]
-	GetClientAuthString(client, idbuf, sizeof(idbuf))
+	getSteamID(client, idbuf, sizeof(idbuf))
 
 	char namebuf[MAX_NAME_LENGTH]
 	GetClientName(client, namebuf, sizeof(namebuf))
@@ -286,7 +297,7 @@ Action onPlayerDecal(const char[] name, const int[] clients, int count, float de
 	GetClientName(client, namebuf, sizeof(namebuf))
 
 	char idbuf[MAX_AUTHID_LENGTH]
-	GetClientAuthString(client, idbuf, sizeof(idbuf))
+	getSteamID(client, idbuf, sizeof(idbuf))
 
 	char messagebuf[256]
 	Format(messagebuf, sizeof(messagebuf), "Spray: **%s** (``%s``) -> <Spray: ``%s``>\n", namebuf, idbuf, spraybuf)
@@ -323,12 +334,12 @@ public void CallAdmin_OnReportPost(int client, int target, const char[] reason) 
 
 	if (client != REPORTER_CONSOLE) {
 		GetClientName(client, reporter, sizeof(reporter))
-		GetClientAuthId(client, AuthId_Steam2, reporterID, 21)
+		getSteamID(client, reporterID, sizeof(reporterID))
 	}
 
 	if (target != REPORTER_CONSOLE) {
 	    GetClientName(target, reportee, sizeof(reportee))
-	    GetClientAuthId(target, AuthId_Steam2, reporteeID, sizeof(reporteeID))
+	    getSteamID(target, reporteeID, sizeof(reporteeID))
 	}
 
 	char pointSymbol[64]
