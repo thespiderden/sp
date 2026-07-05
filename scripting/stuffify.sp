@@ -164,6 +164,11 @@ Action cmdClass(int client, int args, regenerate=false) {
 }
 
 Action cmdRegenify(int client, int args) {
+	if (args != 1) {
+		ReplyToCommand(client, "[stuffify] Invalid number of arguments.")
+		return Plugin_Handled
+	}
+
 	char targetBuf[MAX_TARGET_LENGTH]
 	GetCmdArg(1, targetBuf, sizeof(targetBuf))
 
@@ -185,6 +190,11 @@ Action cmdRegenify(int client, int args) {
 }
 
 Action cmdRespawnify(int client, int args) {
+	if (args != 1) {
+		ReplyToCommand(client, "[stuffify] Invalid number of arguments.")
+		return Plugin_Handled
+	}
+
 	char targetBuf[MAX_TARGET_LENGTH]
 	GetCmdArg(1, targetBuf, sizeof(targetBuf))
 
@@ -208,6 +218,11 @@ Action cmdRespawnify(int client, int args) {
 char teamStr[][]  = {"unassigned", "spectator", "red", "blue", "green", "yellow"}
 
 Action cmdTeamify(int client, int args) {
+	if (args != 2) {
+		ReplyToCommand(client, "[stuffify] Invalid number of arguments.")
+		return Plugin_Handled
+	}
+
 	char targetBuf[MAX_TARGET_LENGTH]
 	GetCmdArg(1, targetBuf, sizeof(targetBuf))
 
@@ -246,6 +261,11 @@ Action cmdTeamify(int client, int args) {
 }
 
 Action cmdMoneyify(int client, int args) {
+	if (args != 2) {
+		ReplyToCommand(client, "[stuffify] Invalid number of arguments.")
+		return Plugin_Handled
+	}
+
 	char targetBuf[MAX_TARGET_LENGTH]
 	GetCmdArg(1, targetBuf, sizeof(targetBuf))
 
