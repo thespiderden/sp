@@ -99,15 +99,17 @@ Do various stuff to players. Depends on a patched TF2C Sourcemod extension.
 
 ``sm_decondify <target> <condition number>`` - Removes condition from player.
 
-``sm_classify <target> <class>`` - Change player's class in-place without changing weapons
+``sm_classify <target> <class>`` - Change player's class in-place without changing weapons.
 
-``sm_reclassify <target> <class>`` - Change player's class and change/restock weapons
+``sm_reclassify <target> <class>`` - Change player's class and change/restock weapons.
 
-``sm_regenify <target>`` - Regenerates a player, behaves as if they touched a resupply cabinet
+``sm_regenify <target>`` - Regenerates a player, behaves as if they touched a resupply cabinet.
 
-``sm_respawnify <target>`` - Immediately respawns player
+``sm_respawnify <target>`` - Immediately respawns player.
 
-``sm_teamify <target> <team>`` - Changes player's team, killing them in the process
+``sm_teamify <target> <team>`` - Changes player's team, killing them in the process.
+
+``sm_moneyify <target> amount`` - Sets a player's MvM balance.
 
 ## Admin Caboose
 

@@ -47,6 +47,7 @@ public void OnPluginStart() {
 	RegAdminCmd("sm_regenify", cmdRegenify, ADMFLAG_ROOT, "Heals/restocks player as if they touched a resupply cabinet.")
 	RegAdminCmd("sm_respawnify", cmdRespawnify, ADMFLAG_ROOT, "Respawns player if dead.")
 	RegAdminCmd("sm_teamify", cmdTeamify, ADMFLAG_ROOT, "Changes a player's team.")
+	RegAdminCmd("sm_moneyify", cmdMoneyify, ADMFLAG_ROOT, "Sets a player's balance.")
 }
 
 Action cmdAddCond(int client, int args) {
@@ -239,6 +240,29 @@ Action cmdTeamify(int client, int args) {
 
 	for (i = 0; i < found; i++) {
 		TF2_ChangeClientTeam(targets[i], team)
+	}
+
+	return Plugin_Handled
+}
+
+Action cmdMoneyify(int client, int args) {
+	char targetBuf[MAX_TARGET_LENGTH]
+	GetCmdArg(1, targetBuf, sizeof(targetBuf))
+
+	int amount = GetCmdArgInt(2)
+
+	int targets[MAXPLAYERS]
+	char target[MAX_TARGET_LENGTH]
+	bool tnIsMl
+
+	int found = ProcessTargetString(targetBuf, client, targets, sizeof(targets), 0, target, sizeof(target), tnIsMl)
+	if (found == 0) {
+		ReplyToCommand(client, "[stuffify] Couldn't find target.")
+		return Plugin_Handled
+	}
+
+	for (int i = 0; i < found; i++) {
+		SetEntProp(targets[i], Prop_Send, "m_nCurrency", amount)
 	}
 
 	return Plugin_Handled
