@@ -23,6 +23,10 @@ all derivative works.
 #include <sdktools>
 #include <tf2>
 
+#if !defined(VERSION)
+	#define VERSION "unknown"
+#endif
+
 public Plugin myinfo = {
 	name = "Graylmao",
 	author = "webb <w@spiderden.org>",
