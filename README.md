@@ -206,3 +206,8 @@ per line.
 ``sm_claimdj`` - Claim DJ if whitelisted.
 
 ``sm_abandondj`` - Abandon DJ status if currently the DJ.
+
+# Graylmao
+
+A small plugin that makes players on the unassigned team use the unused gray player skin. Depends on a patched TF2 extension.
+Simply install and use.
