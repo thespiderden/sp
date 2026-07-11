@@ -75,6 +75,7 @@ public void OnPluginStart() {
 	djTimeout = CreateConVar("sm_djstick_timeout", "120", "Number of seconds of voice inactivity before removing active DJ status.")
 
 	HookEvent("player_disconnect", onPlayerDisconnect, EventHookMode_Pre)
+	HookEvent("teamplay_round_start", onRoundStart, EventHookMode_Post)
 
 	approvedDJs = CreateArray(MAX_AUTHID_LENGTH)
 	hudSync = CreateHudSynchronizer()
@@ -264,6 +265,12 @@ void abandonDJ() {
 void onPlayerDisconnect(Event event, const char[] name, bool dontBroadcast) {
 	if (activeDJ == GetClientOfUserId(event.GetInt("userid"))) {
 		abandonDJ()
+	}
+}
+
+void onRoundStart(Event event, const char[] name, bool dontBroadcast) {
+	if (activeDJ != DJ_NONE) {
+		refreshHudText()
 	}
 }
 
