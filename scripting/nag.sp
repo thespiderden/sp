@@ -3,8 +3,7 @@
 #include <sourcemod>
 #include <advanced_motd>
 #include <keyvalues>
-#include <tf2_stocks>
-#include <tf2>
+#include <clients>
 
 #if !defined(VERSION)
 	#define VERSION "unknown"
@@ -19,6 +18,7 @@ public Plugin myinfo = {
 }
 
 KeyValues conf
+int specTeam = -1
 
 public void OnPluginStart() {
 	conf = new KeyValues("nags")
@@ -28,6 +28,13 @@ public void OnPluginStart() {
 
 	RegAdminCmd("sm_nag_reload", cmdReload, ADMFLAG_ROOT)
 	RegAdminCmd("sm_nag", cmdNag, ADMFLAG_KICK)
+
+	char folderBuf[PLATFORM_MAX_PATH]
+	GetGameFolderName(folderBuf, sizeof(folderBuf))
+
+	if (StrEqual(folderBuf, "tf") || StrEqual(folderBuf, "tf2classified") || StrEqual(folderBuf, "tf2classic") || StrEqual(folderBuf, "openfortress")) {
+		specTeam = 1
+	}
 }
 
 bool reloadConfig() {
@@ -118,8 +125,8 @@ Action cmdNag(int client, int args) {
 		PrintToChat(targ, rec.textFallback)
 		PrintToChat(targ, rec.url)
 
-		if (rec.forceSpec) {
-			TF2_ChangeClientTeam(targ, TFTeam_Spectator)
+		if (specTeam != -1 && rec.forceSpec) {
+			ChangeClientTeam(targ, specTeam)
 		}
 	}
 
