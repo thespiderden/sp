@@ -43,10 +43,14 @@ Handle prefConsentedMsg
 Handle prefConsented
 Handle prefHideHidden
 
+ConVar enabled
+
 bool viewedConsent[MAXPLAYERS]
 
 public void OnPluginStart() {
 	InitAttribution("zensitive")
+
+	enabled = CreateConVar("sm_zensitive_enable", "1", "Toggles whether sensitive chat is enabled or not.")
 
 	prefOldConsentedMsg = RegClientCookie("zensitive.consent.message", "Defunct chat message cookie. No functionality.", CookieAccess_Protected)
 	prefConsentedMsg = RegClientCookie("zensitive.consent.chat", "Consented to sensitive chat messages.", CookieAccess_Protected)
@@ -178,6 +182,11 @@ Action _cmdSay(int client, int args, team=false) {
 		return Plugin_Continue
 	}
 
+	if (!enabled.BoolValue) {
+		PrintToChat(client, "[zensitive] You cannot send sensitive chat messages as they are currently disabled.")
+		return Plugin_Handled
+	}
+
 	if (team) {
 		PrintToChat(client, "[zensitive] Team sensitive chats are not supported.")
 		return Plugin_Handled
@@ -265,6 +274,11 @@ Action cmdSensitive(int client, int args) {
 		}
 
 		default: {
+			if (!enabled.BoolValue) {
+				ReplyToCommand(client, "[zensitive] You cannot opt into sensitive chat as it is currently disabled.")
+				return Plugin_Handled
+			}
+
 			consentMenu = new Menu(consentMenuCallback)
 			char msg[512]
 			Format(msg, sizeof(msg), "%s\n%s\n \n%s\n%s\n \n%s\n%s\n \n%s\n%s\n ",
