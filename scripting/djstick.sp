@@ -90,6 +90,10 @@ public void OnPluginStart() {
 	cmdReload(0, 0)
 }
 
+public void OnPluginEnd() {
+	abandonDJ()
+}
+
 Action cmdForceDJ(int client, int args) {
 	if (args != 1) {
 		ReplyToCommand(client, "[djstick] Wrong number of arguments")
