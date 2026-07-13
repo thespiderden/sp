@@ -79,6 +79,8 @@ public void OnPluginStart() {
 
 	HookEvent("player_disconnect", onPlayerDisconnect, EventHookMode_Pre)
 	HookEvent("teamplay_round_start", onRoundStart, EventHookMode_Post)
+	HookEvent("player_spawn", refreshPlayerHudEvent, EventHookMode_Post)
+	HookEvent("player_activate", refreshPlayerHudEvent, EventHookMode_Post)
 
 	approvedDJs = CreateArray(MAX_AUTHID_LENGTH)
 	hudSync = CreateHudSynchronizer()
@@ -196,9 +198,14 @@ Action cmdClaimDJ(int client, int args) {
 	return Plugin_Handled
 }
 
-void refreshHudText() {
+void refreshHudText(int client = -1) {
 	int i
 	if (activeDJ == DJ_NONE) {
+		if (client != -1) {
+			ClearSyncHud(client, hudSync)
+			return
+		}
+
 		for (i = 1; i <= MaxClients; i++) {
 			if (!IsClientConnected(i) || !IsClientInGame(i) || !IsClientAuthorized(i) || IsFakeClient(i)) {
 				continue
@@ -216,20 +223,26 @@ void refreshHudText() {
 	char hudTextBuf[128]
 	Format(hudTextBuf, sizeof(hudTextBuf), "Current DJ: %s ", nameBuf)
 
+	SetHudTextParams(
+		hudTextX.FloatValue,
+	 	hudTextY.FloatValue,
+		4.0,
+	 	hudTextR.IntValue,
+		hudTextG.IntValue,
+	 	hudTextB.IntValue,
+		255
+	)
+
+	if (client != -1) {
+		ShowSyncHudText(client, hudSync, hudTextBuf)
+		return
+	}
+
 	for (i = 1; i <= MaxClients; i++) {
 		if (!IsClientConnected(i) || !IsClientAuthorized(i) || !IsClientInGame(i) || IsFakeClient(i)) {
 			continue
 		}
 
-		SetHudTextParams(
-			hudTextX.FloatValue,
-		 	hudTextY.FloatValue,
-			4.0,
-		 	hudTextR.IntValue,
-			hudTextG.IntValue,
-		 	hudTextB.IntValue,
-			255
-		)
 		ShowSyncHudText(i, hudSync, hudTextBuf)
 	}
 }
@@ -274,6 +287,13 @@ void onPlayerDisconnect(Event event, const char[] name, bool dontBroadcast) {
 void onRoundStart(Event event, const char[] name, bool dontBroadcast) {
 	if (activeDJ != DJ_NONE) {
 		refreshHudText()
+	}
+}
+
+void refreshPlayerHudEvent(Event event, const char[] name, bool dontBroadcast) {
+	int client = GetClientOfUserId(event.GetInt("userid"))
+	if (activeDJ != DJ_NONE) {
+		refreshHudText(client)
 	}
 }
 
