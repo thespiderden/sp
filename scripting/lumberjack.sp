@@ -198,7 +198,9 @@ void getSteamID(int client, char[] buf, int size) {
 		fmt = AuthId_SteamID64
 	}
 
-	GetClientAuthId(client, fmt, buf, size)
+	if (!GetClientAuthId(client, fmt, buf, size)) {
+		strcopy(buf, MAX_AUTHID_LENGTH, "UNAUTHENTICATED")
+	}
 }
 
 public Action OnClientSayCommand(int client, const char[] command, const char[] sArgs) {
