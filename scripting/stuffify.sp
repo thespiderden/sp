@@ -52,6 +52,8 @@ public void OnPluginStart() {
 	RegAdminCmd("sm_teamify", cmdTeamify, ADMFLAG_ROOT, "Changes a player's team.")
 	RegAdminCmd("sm_moneyify", cmdMoneyify, ADMFLAG_ROOT, "Sets a player's balance.")
 	RegAdminCmd("sm_healthify", cmdHealthify, ADMFLAG_ROOT, "Sets a player's health.")
+	RegAdminCmd("sm_truceify", cmdTruceify, ADMFLAG_ROOT, "Enables a truce.")
+	RegAdminCmd("sm_detruceify", cmdDetruceify, ADMFLAG_ROOT, "Disables the truce.")
 }
 
 Action cmdAddCond(int client, int args) {
@@ -316,6 +318,32 @@ Action cmdHealthify(int client, int args) {
 	for (int i = 0; i < found; i++) {
 		SetEntProp(targets[i], Prop_Send, "m_iHealth", amount)
 	}
+
+	return Plugin_Handled
+}
+
+Action cmdTruceify(int client, int args) {
+	if (args != 0) {
+		ReplyToCommand(client, "[stuffify] Invalid number of arguments.")
+		return Plugin_Handled
+	}
+
+	GameRules_SetProp("m_bTruceActive", true)
+
+	PrintToChatAll("[stuffify] Truce is enabled! Players cannot damage each other.")
+
+	return Plugin_Handled
+}
+
+Action cmdDetruceify(int client, int args) {
+	if (args != 0) {
+		ReplyToCommand(client, "[stuffify] Invalid number of arguments.")
+		return Plugin_Handled
+	}
+
+	GameRules_SetProp("m_bTruceActive", false)
+
+	PrintToChatAll("[stuffify] Truce is disabled! Players can now damage each other.")
 
 	return Plugin_Handled
 }
