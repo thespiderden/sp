@@ -51,6 +51,7 @@ public void OnPluginStart() {
 	RegAdminCmd("sm_respawnify", cmdRespawnify, ADMFLAG_ROOT, "Respawns player if dead.")
 	RegAdminCmd("sm_teamify", cmdTeamify, ADMFLAG_ROOT, "Changes a player's team.")
 	RegAdminCmd("sm_moneyify", cmdMoneyify, ADMFLAG_ROOT, "Sets a player's balance.")
+	RegAdminCmd("sm_healthify", cmdHealthify, ADMFLAG_ROOT, "Sets a player's health.")
 }
 
 Action cmdAddCond(int client, int args) {
@@ -286,6 +287,34 @@ Action cmdMoneyify(int client, int args) {
 
 	for (int i = 0; i < found; i++) {
 		SetEntProp(targets[i], Prop_Send, "m_nCurrency", amount)
+	}
+
+	return Plugin_Handled
+}
+
+Action cmdHealthify(int client, int args) {
+	if (args != 2) {
+		ReplyToCommand(client, "[stuffify] Invalid number of arguments.")
+		return Plugin_Handled
+	}
+
+	char targetBuf[MAX_TARGET_LENGTH]
+	GetCmdArg(1, targetBuf, sizeof(targetBuf))
+
+	int amount = GetCmdArgInt(2)
+
+	int targets[MAXPLAYERS]
+	char target[MAX_TARGET_LENGTH]
+	bool tnIsMl
+
+	int found = ProcessTargetString(targetBuf, client, targets, sizeof(targets), 0, target, sizeof(target), tnIsMl)
+	if (found == 0) {
+		ReplyToCommand(client, "[stuffify] Couldn't find target.")
+		return Plugin_Handled
+	}
+
+	for (int i = 0; i < found; i++) {
+		SetEntProp(targets[i], Prop_Send, "m_iHealth", amount)
 	}
 
 	return Plugin_Handled
