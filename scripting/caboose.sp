@@ -22,6 +22,7 @@ all derivative works.
 
 #include <sourcemod>
 #include <sdktools>
+#include "include/attribution"
 
 #if !defined(VERSION)
 	#define VERSION "unknown"
@@ -36,6 +37,7 @@ public Plugin myinfo = {
 }
 
 public OnPluginStart() {
+	InitAttribution("caboose")
 	RegConsoleCmd("sm_uid", cmdUID, "Gets the Steam ID of one or more players in a standard format.")
 	RegConsoleCmd("sm_uid64", cmdUID64, "Gets the Steam ID of one or more players in the 64-bit/community format.")
 	RegConsoleCmd("sm_steamhistory", cmdHistory, "Gets the steamhistory.net URL of one or more players.")

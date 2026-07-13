@@ -22,6 +22,7 @@ all derivative works.
 
 #include <ripext>
 #include <sdktools>
+#include "include/attribution"
 
 #if !defined(VERSION)
 	#define VERSION "unknown"
@@ -55,6 +56,8 @@ bool sprayLogged[MAXPLAYERS]
 char currentMap[256]
 
 public void OnPluginStart() {
+	InitAttribution("lumberjack")
+
 	webhookURL = CreateConVar("sm_lumberjack_webhook", "", "Webhook URL chat, and connections is logged to.", FCVAR_PROTECTED)
 
 	callWebhookURL = CreateConVar("sm_lumberjack_calladmin_webhook", "", "Webhook URL CallAdmin calls are logged to.", FCVAR_PROTECTED)

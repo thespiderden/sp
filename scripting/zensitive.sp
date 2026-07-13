@@ -24,6 +24,7 @@ all derivative works.
 #include <clientprefs>
 #include <sdktools>
 #include <metachatprocessor>
+#include "include/attribution"
 
 #if !defined(VERSION)
 	#define VERSION "unknown"
@@ -45,6 +46,8 @@ Handle prefHideHidden
 bool viewedConsent[MAXPLAYERS]
 
 public void OnPluginStart() {
+	InitAttribution("zensitive")
+
 	prefOldConsentedMsg = RegClientCookie("zensitive.consent.message", "Defunct chat message cookie. No functionality.", CookieAccess_Protected)
 	prefConsentedMsg = RegClientCookie("zensitive.consent.chat", "Consented to sensitive chat messages.", CookieAccess_Protected)
 	prefConsented = RegClientCookie("zensitive.consent", "Currently unused, for a general consent in the future, aside from setting to 'never' to act as a ban from ever consenting for any type.", CookieAccess_Protected)

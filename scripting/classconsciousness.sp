@@ -24,6 +24,8 @@ all derivative works.
 #include <tf2>
 #include <tf2_stocks>
 #include <sdktools>
+#include "include/attribution"
+
 
 #if !defined(VERSION)
 	#define VERSION "unknown"
@@ -55,6 +57,8 @@ ConVar Uniroll
 Handle sdkEquipCall
 
 public OnPluginStart() {
+	InitAttribution("cc")
+
 	Enabled = CreateConVar("sm_cc_enable", "0", "Toggles the enforcement of classes.")
 	Enabled.AddChangeHook(onEnabledChange)
 

@@ -22,6 +22,7 @@ all derivative works.
 
 #include <commandfilters>
 #include <tf2>
+#include "include/attribution"
 
 #if !defined(VERSION)
 	#define VERSION "unknown"
@@ -36,6 +37,8 @@ public Plugin myinfo = {
 }
 
 public void OnPluginStart() {
+	InitAttribution("drugtest")
+
 	AddMultiTargetFilter("@green", filterClients, "Green Team", false)
 	AddMultiTargetFilter("@yellow", filterClients, "Yellow Team", false)
 }

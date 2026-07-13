@@ -26,6 +26,7 @@ all derivative works.
 #include <tf2>
 #include <tf2_stocks>
 #include <sdktools>
+#include "include/attribution"
 
 #if !defined(VERSION)
 	#define VERSION "unknown"
@@ -40,6 +41,8 @@ public Plugin myinfo = {
 }
 
 public void OnPluginStart() {
+	InitAttribution("stuffify")
+
 	RegAdminCmd("sm_condify", cmdAddCond, ADMFLAG_ROOT, "Adds a condition to player.")
 	RegAdminCmd("sm_decondify", cmdRemoveCond, ADMFLAG_ROOT, "Removes a condition from a player.")
 	RegAdminCmd("sm_classify", cmdClassify, ADMFLAG_ROOT, "Changes a player's class without removing weapons.")

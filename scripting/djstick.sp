@@ -23,6 +23,7 @@ all derivative works.
 #include <sourcemod>
 #include <halflife>
 #include <sdktools_voice>
+#include "include/attribution"
 
 #if !defined(VERSION)
 	#define VERSION "unknown"
@@ -56,6 +57,8 @@ ConVar hudTextB
 ConVar djTimeout
 
 public void OnPluginStart() {
+	InitAttribution("djstick")
+
 	RegAdminCmd("sm_djstick_reload", cmdReload, ADMFLAG_ROOT), "Reload whitelist."
 	RegAdminCmd("sm_djstick_force", cmdForceDJ, ADMFLAG_ROOT, "Force a certain player to be DJ, regardless of whitelist status.")
 	RegAdminCmd("sm_forcedj", cmdForceDJ, ADMFLAG_KICK, "Force a certain player to be DJ, regardless of whitelist status")

@@ -24,6 +24,7 @@ all derivative works.
 #include <sdktools>
 #include <adt_array>
 #include <files>
+#include "include/attribution"
 
 #if !defined(VERSION)
 	#define VERSION "unknown"
@@ -43,6 +44,8 @@ bool sprayStatus[MAXPLAYERS]
 ConVar enabled
 
 public void OnPluginStart() {
+	InitAttribution("ratpoison")
+
 	allowedSprayers = CreateArray(MAX_AUTHID_LENGTH)
 
 	enabled = CreateConVar("sm_ratpoison_enable", "1", "Whether the plugin prevents non-whitelisted players from spraying.", ADMFLAG_ROOT)

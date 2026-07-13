@@ -22,6 +22,7 @@ all derivative works.
 
 #include <sdktools>
 #include <sourcemod>
+#include "include/attribution"
 
 #if !defined(VERSION)
 	#define VERSION "unknown"
@@ -38,6 +39,7 @@ public Plugin myinfo = {
 ConVar kickTolerance
 
 public void OnPluginStart() {
+	InitAttribution("idlln")
 	kickTolerance = CreateConVar("sm_idlln_kicktolerance", "10", "Number of seconds after being placed in game to check if a player still has no ID to kick. -1 = skip.")
 
 	RegAdminCmd("sm_kickidless", cmdKickIDless, Admin_Kick)
