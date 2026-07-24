@@ -103,18 +103,28 @@ public OnPluginStart() {
 public OnPluginEnd() {
 	UnhookEvent("post_inventory_application", onInventoryUpdate)
 	UnhookEvent("player_spawn", onPlayerSpawn)
-	cleanupVIP()
+	cleanupClasses()
 }
 
-void cleanupVIP() {
-	for (int i = 1; i <= TFTeam_COUNT; i++) {
-		int vip = getVIP(i)
-		if (vip == NO_VIP) {
+void cleanupClasses() {
+	for (int i = 1; i <= MaxClients; i++) {
+		if (!IsClientConnected(i) || !IsClientInGame(i) || GetClientTeam(i) == TFTeam_Spectator || GetClientTeam(i) == TFTeam_Unassigned) {
 			continue
 		}
 
-		TF2_SetPlayerClass(vip, TFClass_Civilian)
-		TF2_RespawnPlayer(vip)
+		TFTeam team = TF2_GetClientTeam(i)
+		int vip = getVIP(team)
+
+		if (i != vip && classes[team] == TFClass_Civilian && !specialClassesEnabled()) {
+			TF2_SetPlayerClass(i, GetRandomInt(1, 9))
+			TF2_RespawnPlayer(i)
+			continue
+		}
+
+		if (i == vip && TF2_GetPlayerClass(vip) != TFClass_Civilian) {
+			TF2_SetPlayerClass(i, TFClass_Civilian)
+			TF2_RespawnPlayer(i)
+		}
 	}
 }
 
@@ -220,7 +230,7 @@ void onEnabledChange(ConVar cvar, char[] oldv, char[] newv) {
 		updatePlayerClasses()
 		printClasses("Class restrictions enabled")
 	} else {
-		cleanupVIP()
+		cleanupClasses()
 	}
 }
 
