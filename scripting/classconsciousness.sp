@@ -42,12 +42,10 @@ public Plugin myinfo = {
 const int TFTeam_Green = 4
 const int TFTeam_Yellow = 5
 const int TFTeam_COUNT = 6
-const int TFClass_Civilian = 9
+const int TFClass_Civilian = 10
 
 char classStr[][]  = {"", "Scout", "Sniper", "Soldier", "Demo", "Medic", "Heavy", "Pyro", "Spy", "Engineer", "Civilian"}
 TFClassType classes[6]
-
-int vips[TFTeam_COUNT]
 
 ConVar Enabled
 ConVar Rolls
@@ -75,7 +73,6 @@ public OnPluginStart() {
 
 	HookEvent("player_spawn", onPlayerSpawn)
 	HookEvent("teamplay_round_start", onRoundStart)
-	HookEvent("vip_assigned", onVIPAssigned)
 	HookEvent("post_inventory_application", onInventoryUpdate)
 
 	GameData gameConf = LoadGameConfigFile("sdktools.games/game.tf2classified")
@@ -102,22 +99,23 @@ public OnPluginStart() {
 		}
 		return
 	}
-
-	// Hack: Because there is no way to get the VIP outside of events, we restart the round
-	// to force reassign a VIP.
-	SetConVarInt(FindConVar("mp_restartgame"), 1)
 }
 
 public OnPluginEnd() {
-	// Cleanup so that the VIP is changed back
-	if (currentlyVip()) {
-		SetConVarInt(FindConVar("mp_restartgame"), 1)
-	}
+	UnhookEvent("post_inventory_application", onInventoryUpdate)
+	UnhookEvent("player_spawn", onPlayerSpawn)
+	cleanupVIP()
 }
 
-public void OnMapStart() {
-	for (int i = 0; i < sizeof(vips); i++) {
-		vips[i] = 0
+void cleanupVIP() {
+	for (int i = 1; i <= TFTeam_COUNT; i++) {
+		int vip = getVIP(i)
+		if (vip == NO_VIP) {
+			continue
+		}
+
+		TF2_SetPlayerClass(vip, TFClass_Civilian)
+		TF2_RespawnPlayer(vip)
 	}
 }
 
@@ -207,15 +205,6 @@ Action cmdChangeClass(int client, int args) {
 	return Plugin_Handled
 }
 
-void onVIPAssigned(Event event, char[] name, bool dontBroadcoast) {
-	int userid = event.GetInt("userid")
-	int team = event.GetInt("team")
-	int client = GetClientOfUserId(userid)
-	vips[team] = client
-
-	return
-}
-
 void onEnabledChange(ConVar cvar, char[] oldv, char[] newv) {
 	if (StrEqual(oldv, newv, false)) {
 		return
@@ -227,6 +216,8 @@ void onEnabledChange(ConVar cvar, char[] oldv, char[] newv) {
 		}
 		updatePlayerClasses()
 		printClasses("Class restrictions enabled")
+	} else {
+		cleanupVIP()
 	}
 }
 
@@ -239,6 +230,23 @@ bool currentlyVip() {
 	}
 
 	return false
+}
+
+const NO_VIP = -1
+int getVIP(TFTeam team) {
+	int ent
+	while ((ent = FindEntityByClassname(ent, "tf_team")) != INVALID_ENT_REFERENCE) {
+		if (GetEntProp(ent, Prop_Send, "m_iTeamNum") == team) {
+			int vip = GetEntProp(ent, Prop_Send, "m_iVIP")
+			if (vip == 0) {
+				vip = NO_VIP
+			}
+
+			return vip
+		}
+	}
+
+	return NO_VIP
 }
 
 void printClasses(char[] msg="Classes") {
@@ -277,7 +285,7 @@ void onInventoryUpdate(Event event, char[] name, bool dontBroadcast) {
 	int client = GetClientOfUserId(event.GetInt("userid"))
 	int team = TF2_GetClientTeam(client)
 
-	if (vips[team] != client) {
+	if (getVIP(team) != client) {
 		return
 	}
 
