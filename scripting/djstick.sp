@@ -107,6 +107,27 @@ public void OnPluginEnd() {
 }
 
 Action cmdForceDJ(int client, int args) {
+	if (args == 0) {
+		Menu menu = new Menu(forceDJMenuHandle)
+		menu.SetTitle("Select player")
+
+		for (int i = 1; i <= MaxClients; i++) {
+			if (!IsClientConnected(i) || !IsClientInGame(i) || IsFakeClient(i)) {
+				continue
+			}
+
+			char serial[64]
+			IntToString(GetClientSerial(i), serial, sizeof(serial))
+
+			char name[MAX_NAME_LENGTH]
+			GetClientName(i, name, sizeof(name))
+			menu.AddItem(serial, name)
+		}
+
+		DisplayMenu(menu, client, 60)
+		return Plugin_Handled
+	}
+
 	if (args != 1) {
 		ReplyToCommand(client, "[djstick] Wrong number of arguments")
 		return Plugin_Handled
@@ -418,6 +439,14 @@ Action cmdMenu(int client, int args) {
 		}
 	}
 
+	if (CheckCommandAccess(client, "sm_revokedj", ADMFLAG_KICK)) {
+		menu.AddItem("djRevoke", "Revoke DJ (Admin)")
+	}
+
+	if (CheckCommandAccess(client, "sm_forcedj", ADMFLAG_KICK)) {
+		menu.AddItem("djForce", "Force DJ (Admin)")
+	}
+
 	DisplayMenu(menu, client, 30)
 
 	return Plugin_Handled
@@ -441,7 +470,49 @@ int menuHandle(Menu menu, MenuAction action, int param1, int param2) {
 				cmdDJMute(param1, 0)
 			} else if (StrEqual(info, "djUnmute")) {
 				cmdDJUnmute(param1, 0)
+			} else if (StrEqual(info, "djRevoke")) {
+				if (CheckCommandAccess(param1, "sm_revokedj", ADMFLAG_KICK)) {
+					cmdRevokeDJ(param1, 0)
+				}
+			} else if (StrEqual(info, "djForce")) {
+				if (CheckCommandAccess(param1, "sm_forcedj", ADMFLAG_KICK)) {
+					cmdForceDJ(param1, 0)
+				}
 			}
+		}
+
+		case MenuAction_End: {
+			delete menu
+		}
+	}
+
+	return 0
+}
+
+
+int forceDJMenuHandle(Menu menu, MenuAction action, int param1, int param2) {
+	switch (action) {
+		case MenuAction_Select: {
+			if (!CheckCommandAccess(param1, "sm_forcedj", ADMFLAG_KICK)) {
+				return 0
+			}
+
+			char info[64]
+			menu.GetItem(param2, info, sizeof(info))
+
+			int serial = StringToInt(info)
+			int client = GetClientFromSerial(serial)
+			if (client == 0) {
+				ReplyToCommand(client, "[djstick] Could not find player.")
+				return 0
+			}
+
+			if (!IsClientConnected(client) || !IsClientInGame(client) || IsFakeClient(client)) {
+				ReplyToCommand(param1, "[djstick] Invalid player.")
+				return 0
+			}
+
+			changeDJ(client)
 		}
 
 		case MenuAction_End: {
