@@ -92,13 +92,12 @@ public OnPluginStart() {
 
 	sdkEquipCall = EndPrepSDKCall()
 
-	if (!currentlyVip()) {
-		if (Enabled.BoolValue) {
-			printClasses("Plugin loaded")
-			updatePlayerClasses()
-		}
-		return
+	if (Enabled.BoolValue) {
+		printClasses("Plugin loaded")
+		updatePlayerClasses()
 	}
+
+	return
 }
 
 public OnPluginEnd() {
