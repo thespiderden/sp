@@ -205,6 +205,10 @@ Action cmdChangeClass(int client, int args) {
 	return Plugin_Handled
 }
 
+bool specialClassesEnabled() {
+	return FindConVar("tf2c_allow_special_classes").BoolValue
+}
+
 void onEnabledChange(ConVar cvar, char[] oldv, char[] newv) {
 	if (StrEqual(oldv, newv, false)) {
 		return
@@ -313,10 +317,15 @@ void rollClasses(force=false) {
 		return
 	}
 
-	classes[TFTeam_Red] = GetRandomInt(1, 10)
-	classes[TFTeam_Blue] = GetRandomInt(1, 10)
-	classes[TFTeam_Green] = GetRandomInt(1, 10)
-	classes[TFTeam_Yellow] = GetRandomInt(1, 10)
+	int max = 10
+	if (!specialClassesEnabled()) {
+		max = 9
+	}
+
+	classes[TFTeam_Red] = GetRandomInt(1, max)
+	classes[TFTeam_Blue] = GetRandomInt(1, max)
+	classes[TFTeam_Green] = GetRandomInt(1, max)
+	classes[TFTeam_Yellow] = GetRandomInt(1, max)
 
 	if (Uniroll.BoolValue) {
 		TFClassType class = classes[TFTeam_Red]
