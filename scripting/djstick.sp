@@ -56,6 +56,8 @@ ConVar hudTextB
 
 ConVar djTimeout
 
+ConVar djApplicationMessage
+
 public void OnPluginStart() {
 	InitAttribution("djstick")
 
@@ -67,7 +69,7 @@ public void OnPluginStart() {
 
 	RegConsoleCmd("sm_claimdj", cmdClaimDJ, "Claim the active DJ status if you're whitelisted.")
 	RegConsoleCmd("sm_abandondj", cmdAbandonDJ, "Remove your own active DJ status.")
-	RegConsoleCmd("sm_dj", cmdDJ, "Show the current DJ.")
+	RegConsoleCmd("sm_dj", cmdMenu, "Shows a menu to manage DJ actions.")
 
 	hudTextX = CreateConVar("sm_djstick_hudpos_x", "1.0", "The X position of the active DJ hud text. 0.0-1.0")
 	hudTextY = CreateConVar("sm_djstick_hudpos_y", "0.005", "The Y position of the active DJ hud text. 0.0-1.0")
@@ -76,6 +78,8 @@ public void OnPluginStart() {
 	hudTextB = CreateConVar("sm_djstick_hudcolour_b", "255", "Blue value for RGB colour of the active DJ hud text. 0-255")
 
 	djTimeout = CreateConVar("sm_djstick_timeout", "120", "Number of seconds of voice inactivity before removing active DJ status.")
+
+	djApplicationMessage = CreateConVar("sm_djstick_apply_msg", "", "Optional message to show in chat from menu to give application instructions.")
 
 	HookEvent("player_disconnect", onPlayerDisconnect, EventHookMode_Pre)
 	HookEvent("teamplay_round_start", onRoundStart, EventHookMode_Post)
@@ -115,23 +119,6 @@ Action cmdForceDJ(int client, int args) {
 	}
 
 	changeDJ(targets[0])
-	return Plugin_Handled
-}
-
-Action cmdDJ(int client, int args) {
-	if (activeDJ == DJ_NONE) {
-		ReplyToCommand(client, "[djstick] There is no active DJ.")
-		return Plugin_Handled
-	}
-
-	char nameBuf[MAX_NAME_LENGTH]
-	GetClientName(activeDJ, nameBuf, sizeof(nameBuf))
-
-	char replyBuf[192]
-	Format(replyBuf, sizeof(replyBuf), "[djstick] The current DJ is %s.", nameBuf)
-
-	ReplyToCommand(client, replyBuf)
-
 	return Plugin_Handled
 }
 
@@ -315,4 +302,74 @@ public void OnClientSpeaking(int client) {
 	}
 
 	lastDJVoiceTime = GetTime()
+}
+
+Action cmdMenu(int client, int args) {
+	Menu menu = new Menu(menuHandle)
+
+	menu.SetTitle("DJ Menu")
+
+	char dj[MAX_NAME_LENGTH] = "none"
+	if (activeDJ != DJ_NONE) {
+		GetClientName(client, dj, sizeof(dj))
+	}
+
+	char status[4] = "no"
+	if (djApprovalStatus[client]) {
+		status = "yes"
+	}
+
+	menu.SetTitle("DJ Menu\n \nCurrent DJ: %s\nApproval status: %s\n ", dj, status)
+
+	if (djApprovalStatus[client] && activeDJ == DJ_NONE) {
+		menu.AddItem("claim", "Claim active DJ status")
+	}
+
+	if (djApprovalStatus[client] && activeDJ != DJ_NONE && activeDJ != client) {
+		menu.AddItem("claim", "Claim active DJ status (disabled; another player is DJ.)", ITEMDRAW_DISABLED)
+	}
+
+	if (activeDJ == client) {
+		menu.AddItem("abandon", "Abandon active DJ status")
+	}
+
+	if (!djApprovalStatus[client]) {
+		char msg[2]
+		djApplicationMessage.GetString(msg, sizeof(msg))
+
+		if (msg[0] != '\0') {
+			menu.AddItem("applyMessage", "Become an approved DJ")
+		} else {
+			menu.AddItem("claim", "Claim active DJ status (disabled; you are not approved)", ITEMDRAW_DISABLED)
+		}
+	}
+
+	DisplayMenu(menu, client, 30)
+
+	return Plugin_Handled
+}
+
+int menuHandle(Menu menu, MenuAction action, int param1, int param2) {
+	switch (action) {
+		case MenuAction_Select: {
+			char info[32]
+			menu.GetItem(param2, info, sizeof(info))
+
+			if (StrEqual(info, "claim")) {
+				cmdClaimDJ(param1, 0)
+			} else if (StrEqual(info, "abandon")) {
+				cmdAbandonDJ(param1, 0)
+			} else if (StrEqual(info, "applyMessage")) {
+				char msg[192]
+				djApplicationMessage.GetString(msg, sizeof(msg))
+				PrintToChat(param1, "[djstick] %s", msg)
+			}
+		}
+
+		case MenuAction_End: {
+			delete menu
+		}
+	}
+
+	return 0
 }
