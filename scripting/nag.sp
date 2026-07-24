@@ -26,8 +26,8 @@ public void OnPluginStart() {
 		SetFailState("Could not parse configuration file.")
 	}
 
-	RegAdminCmd("sm_nag_reload", cmdReload, ADMFLAG_ROOT)
-	RegAdminCmd("sm_nag", cmdNag, ADMFLAG_KICK)
+	RegAdminCmd("sm_nag_reload", cmdReload, ADMFLAG_ROOT, "Reload the nag configuration file.")
+	RegAdminCmd("sm_nag", cmdNag, ADMFLAG_KICK, "Nag a player, showing them the specified nag in a MOTD popup.")
 
 	RegConsoleCmd("sm_selfnag", cmdSelfNag, "Nag yourself.")
 
