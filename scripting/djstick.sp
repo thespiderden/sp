@@ -23,6 +23,7 @@ all derivative works.
 #include <sourcemod>
 #include <halflife>
 #include <sdktools_voice>
+#include <clientprefs>
 #include "include/attribution"
 
 #if !defined(VERSION)
@@ -58,6 +59,8 @@ ConVar djTimeout
 
 ConVar djApplicationMessage
 
+Handle muteDJCookie
+
 public void OnPluginStart() {
 	InitAttribution("djstick")
 
@@ -70,6 +73,8 @@ public void OnPluginStart() {
 	RegConsoleCmd("sm_claimdj", cmdClaimDJ, "Claim the active DJ status if you're whitelisted.")
 	RegConsoleCmd("sm_abandondj", cmdAbandonDJ, "Remove your own active DJ status.")
 	RegConsoleCmd("sm_dj", cmdMenu, "Shows a menu to manage DJ actions.")
+	RegConsoleCmd("sm_djmute", cmdDJMute, "Enables the automatic muting of DJs.")
+	RegConsoleCmd("sm_djunmute", cmdDJUnmute, "Enables the automatic unmuting of DJs.")
 
 	hudTextX = CreateConVar("sm_djstick_hudpos_x", "1.0", "The X position of the active DJ hud text. 0.0-1.0")
 	hudTextY = CreateConVar("sm_djstick_hudpos_y", "0.005", "The Y position of the active DJ hud text. 0.0-1.0")
@@ -79,6 +84,7 @@ public void OnPluginStart() {
 
 	djTimeout = CreateConVar("sm_djstick_timeout", "120", "Number of seconds of voice inactivity before removing active DJ status.")
 
+	muteDJCookie = RegClientCookie("djstick.mutedj", "Mute whoever is the current DJ.", CookieAccess_Protected)
 	djApplicationMessage = CreateConVar("sm_djstick_apply_msg", "", "Optional message to show in chat from menu to give application instructions.")
 
 	HookEvent("player_disconnect", onPlayerDisconnect, EventHookMode_Pre)
@@ -191,6 +197,22 @@ Action cmdClaimDJ(int client, int args) {
 	return Plugin_Handled
 }
 
+Action cmdDJMute(int client, int args) {
+	SetClientCookie(client, muteDJCookie, "y")
+	ReplyToCommand(client, "[djstick] DJs will be automatically muted. Run !djunmute to unmute them.")
+	updateDJMute(client, DJ_NONE, activeDJ)
+
+	return Plugin_Handled
+}
+
+Action cmdDJUnmute(int client, int args) {
+	SetClientCookie(client, muteDJCookie, "n")
+	ReplyToCommand(client, "[djstick] DJs will no longer be automatically muted. Run !djmute to mute them again.")
+	updateDJMute(client, DJ_NONE, activeDJ)
+
+	return Plugin_Handled
+}
+
 void refreshHudText(int client = -1) {
 	int i
 	if (activeDJ == DJ_NONE) {
@@ -253,12 +275,15 @@ public void djTimer(Handle timer) {
 }
 
 void changeDJ(int client) {
+	updateDJMutes(activeDJ, client)
+
 	activeDJ = client
 	lastDJVoiceTime = GetTime()
 
 	char nameBuf[MAX_NAME_LENGTH]
 	GetClientName(activeDJ, nameBuf, sizeof(nameBuf))
 	PrintToChatAll("[djstick] %s is now the DJ.", nameBuf)
+
 	refreshHudText()
 }
 
@@ -267,8 +292,49 @@ void abandonDJ() {
 	GetClientName(activeDJ, nameBuf, sizeof(nameBuf))
 	PrintToChatAll("[djstick] %s is no longer DJ.", nameBuf)
 
+	updateDJMutes(activeDJ, DJ_NONE)
 	activeDJ = DJ_NONE
 	refreshHudText()
+}
+
+bool isClientMutingDJs(int client) {
+	char optBuf[2]
+	GetClientCookie(client, muteDJCookie, optBuf, sizeof(optBuf))
+
+	return optBuf[0] == 'y'
+}
+
+void updateDJMutes(int oldDJ, int newDJ) {
+	for (int i = 1; i <= MaxClients; i++) {
+		updateDJMute(i, oldDJ, newDJ)
+	}
+}
+
+void updateDJMute(int client, int oldDJ, int newDJ) {
+	if (!IsClientConnected(client) || IsFakeClient(client)) {
+		return
+	}
+
+	if (oldDJ != DJ_NONE && client != oldDJ && IsClientConnected(oldDJ)) {
+		SetListenOverride(client, oldDJ, Listen_Default)
+	}
+
+	if (newDJ == DJ_NONE || newDJ == client || !IsClientConnected(newDJ)) {
+		return
+	}
+
+	if (!AreClientCookiesCached(client)) {
+		SetListenOverride(client, newDJ, Listen_Default)
+		return
+	}
+
+	if (isClientMutingDJs(client)) {
+		SetListenOverride(client, newDJ, Listen_No)
+		return
+	}
+
+	SetListenOverride(client, newDJ, Listen_Default)
+	return
 }
 
 void onPlayerDisconnect(Event event, const char[] name, bool dontBroadcast) {
@@ -344,6 +410,14 @@ Action cmdMenu(int client, int args) {
 		}
 	}
 
+	if (AreClientCookiesCached(client)) {
+		if (isClientMutingDJs(client)) {
+			menu.AddItem("djUnmute", "Mute DJs")
+		} else {
+			menu.AddItem("djMute", "Unmute DJs")
+		}
+	}
+
 	DisplayMenu(menu, client, 30)
 
 	return Plugin_Handled
@@ -363,6 +437,10 @@ int menuHandle(Menu menu, MenuAction action, int param1, int param2) {
 				char msg[192]
 				djApplicationMessage.GetString(msg, sizeof(msg))
 				PrintToChat(param1, "[djstick] %s", msg)
+			} else if (StrEqual(info, "djMute")) {
+				cmdDJMute(param1, 0)
+			} else if (StrEqual(info, "djUnmute")) {
+				cmdDJUnmute(param1, 0)
 			}
 		}
 
