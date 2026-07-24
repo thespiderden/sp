@@ -29,6 +29,8 @@ public void OnPluginStart() {
 	RegAdminCmd("sm_nag_reload", cmdReload, ADMFLAG_ROOT)
 	RegAdminCmd("sm_nag", cmdNag, ADMFLAG_KICK)
 
+	RegConsoleCmd("sm_selfnag", cmdSelfNag, "Nag yourself.")
+
 	char folderBuf[PLATFORM_MAX_PATH]
 	GetGameFolderName(folderBuf, sizeof(folderBuf))
 
@@ -131,4 +133,24 @@ Action cmdNag(int client, int args) {
 	}
 
 	return Plugin_Handled
+}
+
+Action cmdSelfNag(int client, int args) {
+	if (args != 1) {
+		ReplyToCommand(client, "[nag] Invalid number of arguments.")
+		return Plugin_Handled
+	}
+
+	char nagKey[32]
+	GetCmdArg(1, nagKey, sizeof(nagKey))
+
+	record rec
+	rec = getRecord(nagKey)
+
+	if (!rec.found) {
+		ReplyToCommand(client, "[nag] Could not find nag.")
+		return Plugin_Handled
+	}
+
+	AdvMOTD_ShowMOTDPanel(client, "Nag", rec.url, MOTDPANEL_TYPE_URL, true, false, true)
 }
