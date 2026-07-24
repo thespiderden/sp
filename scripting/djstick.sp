@@ -91,7 +91,9 @@ public void OnPluginStart() {
 }
 
 public void OnPluginEnd() {
-	abandonDJ()
+	if (activeDJ != DJ_NONE) {
+		abandonDJ()
+	}
 }
 
 Action cmdForceDJ(int client, int args) {
