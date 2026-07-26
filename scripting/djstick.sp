@@ -398,7 +398,7 @@ Action cmdMenu(int client, int args) {
 
 	char dj[MAX_NAME_LENGTH] = "none"
 	if (activeDJ != DJ_NONE) {
-		GetClientName(currentDJ, dj, sizeof(dj))
+		GetClientName(activeDJ, dj, sizeof(dj))
 	}
 
 	char status[4] = "no"
