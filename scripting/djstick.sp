@@ -398,7 +398,7 @@ Action cmdMenu(int client, int args) {
 
 	char dj[MAX_NAME_LENGTH] = "none"
 	if (activeDJ != DJ_NONE) {
-		GetClientName(client, dj, sizeof(dj))
+		GetClientName(currentDJ, dj, sizeof(dj))
 	}
 
 	char status[4] = "no"
@@ -433,9 +433,9 @@ Action cmdMenu(int client, int args) {
 
 	if (AreClientCookiesCached(client)) {
 		if (isClientMutingDJs(client)) {
-			menu.AddItem("djUnmute", "Mute DJs")
+			menu.AddItem("djUnmute", "Unmute DJs")
 		} else {
-			menu.AddItem("djMute", "Unmute DJs")
+			menu.AddItem("djMute", "Mute DJs")
 		}
 	}
 
