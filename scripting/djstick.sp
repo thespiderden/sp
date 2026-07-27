@@ -303,7 +303,7 @@ void changeDJ(int client) {
 
 	char nameBuf[MAX_NAME_LENGTH]
 	GetClientName(activeDJ, nameBuf, sizeof(nameBuf))
-	PrintToChatAll("[djstick] %s is now the DJ.", nameBuf)
+	PrintToChatAll("[djstick] %s is now the DJ. You can mute active DJs by typing !djmute in chat.", nameBuf)
 
 	refreshHudText()
 }
