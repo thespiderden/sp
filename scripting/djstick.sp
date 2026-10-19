@@ -383,6 +383,14 @@ public void OnClientAuthorized(int client, const char[] auth) {
 	}
 }
 
+public void OnClientPutInserver(int client) {
+	updateDJMute(client, DJ_NONE, activeDJ)
+}
+
+public void OnClientCookiesCached(int client) {
+	updateDJMute(client, DJ_NONE, activeDJ)
+}
+
 public void OnClientSpeaking(int client) {
 	if (client != activeDJ) {
 		return
