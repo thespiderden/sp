@@ -26,10 +26,6 @@ all derivative works.
 #include <clientprefs>
 #include "include/attribution"
 
-#if !defined(VERSION)
-	#define VERSION "unknown"
-#endif
-
 public Plugin myinfo = {
 	name = "DJ Stick",
 	author = "webb <w@spiderden.org>",

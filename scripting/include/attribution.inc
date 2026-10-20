@@ -1,5 +1,9 @@
 #include <sourcemod>
 
+#if !defined(VERSION)
+	#define VERSION "unknown"
+#endif
+
 #define ATTRIBUTION_FMT "[%s] (C) webb 2026 // To view the source code and copyright info of this plugin, visit https://codeberg.org/spiderden/sp in your browser."
 
 char attributionMsg[192]

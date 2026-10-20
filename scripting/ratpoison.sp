@@ -26,10 +26,6 @@ all derivative works.
 #include <files>
 #include "include/attribution"
 
-#if !defined(VERSION)
-	#define VERSION "unknown"
-#endif
-
 public Plugin myinfo = {
 	name = "Rat Poison",
 	author = "webb <w@spiderden.org>",

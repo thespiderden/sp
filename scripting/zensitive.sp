@@ -26,10 +26,6 @@ all derivative works.
 #include <metachatprocessor>
 #include "include/attribution"
 
-#if !defined(VERSION)
-	#define VERSION "unknown"
-#endif
-
 public Plugin myinfo = {
 	name = "Zensitive",
 	author = "webb <w@spiderden.org>",

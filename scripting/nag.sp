@@ -5,10 +5,6 @@
 #include <keyvalues>
 #include <clients>
 
-#if !defined(VERSION)
-	#define VERSION "unknown"
-#endif
-
 public Plugin myinfo = {
 	name = "Nag",
 	author = "webb <w@spiderden.org>",

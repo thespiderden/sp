@@ -24,10 +24,6 @@ all derivative works.
 #include <tf2>
 #include "include/attribution"
 
-#if !defined(VERSION)
-	#define VERSION "unknown"
-#endif
-
 public Plugin myinfo = {
 	name = "Graylmao",
 	author = "webb <w@spiderden.org>",

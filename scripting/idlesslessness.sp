@@ -24,10 +24,6 @@ all derivative works.
 #include <sourcemod>
 #include "include/attribution"
 
-#if !defined(VERSION)
-	#define VERSION "unknown"
-#endif
-
 public Plugin myinfo = {
 	name = "IDlesslessness",
 	author = "webb <w@spiderden.org>",

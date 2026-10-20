@@ -24,10 +24,6 @@ all derivative works.
 #include <sdktools>
 #include "include/attribution"
 
-#if !defined(VERSION)
-	#define VERSION "unknown"
-#endif
-
 public Plugin myinfo = {
 	name = "Admin Caboose",
 	author = "webb <w@spiderden.org>",
