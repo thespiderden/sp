@@ -4,7 +4,7 @@
 	#define VERSION "unknown"
 #endif
 
-#define ATTRIBUTION_FMT "[%s] (C) webb 2026 // To view the source code and copyright info of this plugin, visit https://codeberg.org/spiderden/sp in your browser."
+#define ATTRIBUTION_FMT "[%s/%s] (C) webb 2026 // To view the source code and copyright info of this plugin, visit https://codeberg.org/spiderden/sp in your browser."
 
 char attributionMsg[192]
 bool seenAttributionMsg[MAXPLAYERS]
@@ -28,7 +28,7 @@ void eventDisconnectAttribution(Event event, const char[] name, bool dontBroadca
 }
 
 void InitAttribution(char[] name) {
-	Format(attributionMsg, sizeof(attributionMsg), ATTRIBUTION_FMT, name)
+	Format(attributionMsg, sizeof(attributionMsg), ATTRIBUTION_FMT, name, VERSION)
 
 	for (int i = 1; i <= MaxClients; i++) {
 		if (!IsClientConnected(i) || IsFakeClient(i) || !IsClientInGame(i)) {
