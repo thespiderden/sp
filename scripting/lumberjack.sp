@@ -194,7 +194,9 @@ void getSteamID(int client, char[] buf, int size) {
 		fmt = AuthId_SteamID64
 	}
 
-	if (!GetClientAuthId(client, fmt, buf, size)) {
+	if (IsFakeClient(client)) {
+		strcopy(buf, MAX_AUTHID_LENGTH, "BOT")
+	} else if (!GetClientAuthId(client, fmt, buf, size)) {
 		strcopy(buf, MAX_AUTHID_LENGTH, "UNAUTHENTICATED")
 	}
 }
